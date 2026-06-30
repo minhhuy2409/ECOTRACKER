@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="groups-layout" style="margin-bottom: 32px;">
+    <!-- Create Group Card -->
+    <div class="card form-card">
+        <p class="card-label">{% if current_lang == 'vi' %}Hợp tác{% else %}Collaborate{% endif %}</p>
+        <h2 style="font-size: 22px; font-weight: 800; color: var(--accent); margin-bottom: 8px;">{{ t.create_group }}</h2>
+        <p class="muted-text" style="margin-bottom: 20px; font-size: 13px;">
+            {% if current_lang == 'vi' %}Tạo thử thách nhóm mới. Mỗi nhóm có thể chứa từ 2 đến 5 thành viên.{% else %}Create a group challenge. Each group can have 2 to 5 members.{% endif %}
+        </p>
+
+        <form method="post" class="eco-form">
+            {% csrf_token %}
+            
+            {% for field in form %}
+                <div class="form-group">
+                    <label for="{{ field.id_for_label }}">{% if current_lang == 'vi' and field.label == 'Group Name' %}Tên nhóm{% else %}{{ field.label }}{% endif %}</label>
+                    {{ field }}
+                    {% if field.errors %}
+                        <small style="color: var(--danger-text); font-weight: 600;">{{ field.errors.0 }}</small>
+                    {% endif %}
+                </div>
+            {% endfor %}
+
+            <button type="submit" class="upload-btn" style="width: 100%; justify-content: center; margin-top: 8px;">{{ t.create_group }}</button>
+        </form>
+    </div>
+
+    <!-- Info Box Card -->
+    <div class="card stat-card" style="justify-content: center; background: linear-gradient(135deg, var(--primary-light), var(--accent-light));">
+        <p class="card-label">{% if current_lang == 'vi' %}Luật chơi nhóm{% else %}Group Rules{% endif %}</p>
+        <h2 style="font-size: 24px; font-weight: 800; color: var(--accent); margin-bottom: 8px;">{% if current_lang == 'vi' %}Hệ thống Thử thách{% else %}Challenge System{% endif %}</h2>
+        <p class="muted-text" style="font-size: 13px; line-height: 1.5; color: var(--text-muted);">
+            {% if current_lang == 'vi' %}Nhóm Eco cho phép bạn lập đội với tối đa 5 người bạn. Khi nhóm của bạn có từ 2 thành viên trở lên, tổng điểm tích lũy của nhóm sẽ bắt đầu tính vào thử thách chung để nhận thưởng tuần!{% else %}Eco groups allow you to team up with up to 5 friends. Once your group has 2 or more members, your collective group points will count towards the 2000 points Team Target Challenge!{% endif %}
+        </p>
+    </div>
+</div>
+
+<!-- Pending Invites Section -->
+<div class="card" style="margin-bottom: 32px;">
+    <div class="card-header">
+        <div>
+            <p class="card-label">{{ t.group_invites }}</p>
+            <h2>{% if current_lang == 'vi' %}Lời mời đang chờ{% else %}Pending Invitations{% endif %}</h2>
+        </div>
+    </div>
+
+    <div class="action-list">
+        {% for invite in received_invites %}
+            <div class="action-item">
+                <div class="action-content">
+                    <h4 style="font-size: 15px; font-weight: 700; color: var(--accent);">{{ invite.group.name }}</h4>
+                    <p style="font-size: 13px; color: var(--text-muted);">{% if current_lang == 'vi' %}Được mời bởi{% else %}Invited by{% endif %} <strong style="color: var(--primary);">{{ invite.sender.username }}</strong></p>
+                </div>
+
+                <div class="friend-actions">
+                    <a href="{% url 'accept_group_invite' invite.id %}">
+                        <button class="small-btn" style="padding: 8px 16px;">{{ t.accept }}</button>
+                    </a>
+                    <a href="{% url 'reject_group_invite' invite.id %}">
+                        <button class="danger-btn" style="padding: 8px 16px;">{{ t.reject }}</button>
+                    </a>
+                </div>
+            </div>
+        {% empty %}
+            {% include "components/empty_state.html" with icon="📨" title="No group invites" message="Group invitations from other users will appear here." %}
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Your Group Challenges -->
+<div class="card">
+    <div class="card-header">
+        <div>
+            <p class="card-label">{% if current_lang == 'vi' %}Nhóm của bạn{% else %}Your Groups{% endif %}</p>
+            <h2>{% if current_lang == 'vi' %}Thử thách Nhóm{% else %}Group Challenges{% endif %}</h2>
+        </div>
+    </div>
+
+    <div class="group-grid">
+        {% for group in user_groups %}
+            <div class="group-card-item">
+                <div class="group-card-header">
+                    <div>
+                        <h3>{{ group.name }}</h3>
+                        <p style="font-size: 13px; color: var(--text-muted); margin-top: 2px;">{{ group.member_count }} / 5 {% if current_lang == 'vi' %}thành viên{% else %}members{% endif %}</p>
+                    </div>
+
+                    {% if group.owner == user %}
+                        <span class="owner-badge">{% if current_lang == 'vi' %}Trưởng nhóm{% else %}Owner{% endif %}</span>
+                    {% else %}
+                        <span class="member-badge">{% if current_lang == 'vi' %}Thành viên{% else %}Member{% endif %}</span>
+                    {% endif %}
+                </div>
+
+                {% if group.member_count < 2 %}
+                    <div class="challenge-status warning-text" style="display: flex; align-items: center; gap: 6px;">
+                        <span>⏳</span> {% if current_lang == 'vi' %}Đang chờ thêm thành viên{% else %}Waiting for more members{% endif %}
+                    </div>
+                {% else %}
+                    <div class="challenge-status success-text" style="display: flex; align-items: center; gap: 6px;">
+                        <span>🔥</span> {% if current_lang == 'vi' %}Thử thách đang hoạt động{% else %}Challenge active{% endif %}
+                    </div>
+                {% endif %}
+
+                <a href="{% url 'group_detail' group.id %}" style="margin-top: 8px; width: 100%;">
+                    <button class="secondary-btn full-btn" style="width: 100%; padding: 12px;">{% if current_lang == 'vi' %}Vào phòng nhóm{% else %}Open Group{% endif %}</button>
+                </a>
+            </div>
+        {% empty %}
+            <div style="grid-column: 1 / -1; width: 100%;">
+                {% include "components/empty_state.html" with icon="🏆" title="No groups yet" message="Create a group challenge or accept an invite to compete with friends." %}
+            </div>
+        {% endfor %}
+    </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,34 @@
+<div class="card recent-card">
+    <div class="card-header">
+        <div>
+            <p class="card-label">Recent Eco Actions</p>
+            <h2>Latest uploads</h2>
+        </div>
+
+        <a href="{% url 'my_progress' %}">View all</a>
+    </div>
+
+    <div class="action-list">
+        {% for action in recent_actions %}
+        <div class="action-item action-with-image">
+            <a href="{{ action.image.url }}" target="_blank" class="action-image-link">
+                {% if action.image %}
+                <img src="{{ action.image.url }}" alt="{{ action.caption }}" class="action-thumb">
+                {% else %}
+                <div class="action-placeholder">🌱</div>
+                {% endif %}
+            </a>
+
+            <div class="action-content">
+                <h4>{{ action.get_category_display }}</h4>
+                <p>{{ action.caption }}</p>
+                <small>{{ action.created_at|date:"d M Y, H:i" }}</small>
+            </div>
+
+            <strong>+{{ action.points }} pts</strong>
+        </div>
+        {% empty %}
+        {% include "components/empty_state.html" with icon="📸" title="No recent actions" message="Upload your first eco action to start earning points." button_url="/upload/" button_text="Upload Action" %}
+        {% endfor %}
+    </div>
+</div>

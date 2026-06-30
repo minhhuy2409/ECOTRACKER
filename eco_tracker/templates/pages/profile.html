@@ -1,0 +1,254 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<section class="profile-layout" style="margin-bottom: 32px;">
+    <!-- Profile Info Card -->
+    <div class="card profile-main-card">
+        <div class="profile-header">
+            <div class="profile-avatar" style="position: relative; overflow: visible; width: 100px; height: 100px; border-radius: 50%; flex-shrink: 0; display: grid; place-items: center; background: var(--primary-light); box-shadow: var(--shadow-md);">
+                {% if user.profile.avatar %}
+                    <img src="{{ user.profile.avatar.url }}" alt="{{ user.username }}" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover; display: block;">
+                {% else %}
+                    <div style="font-size: 38px; font-weight: 800; color: var(--accent);">
+                        {{ user.username|first|upper }}
+                    </div>
+                {% endif %}
+                {% if profile.active_frame %}
+                    <div style="position: absolute; top: -6px; left: -6px; right: -6px; bottom: -6px; border-radius: 50%; pointer-events: none; z-index: 2; {{ profile.active_frame.css_style }}"></div>
+                {% endif %}
+            </div>
+
+            <div>
+                <p class="card-label">{{ t.eco_profile }}</p>
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <h2 style="font-size: 24px; font-weight: 800; color: var(--accent); letter-spacing: -0.5px; margin: 0;">{{ user.username }}</h2>
+                    {% if profile.streak_count > 1 %}
+                        <span class="challenge-status success-text" style="padding: 4px 10px; font-size: 11px; font-weight: 700; border-radius: var(--radius-sm);">
+                            <span class="streak-badge-fire">🔥</span> {{ profile.streak_count }} {{ t.streak }}
+                        </span>
+                    {% endif %}
+                </div>
+
+                {% if user.email %}
+                    <p class="muted-text" style="font-size: 13px; color: var(--text-muted); margin-top: 4px;">{{ user.email }}</p>
+                {% else %}
+                    <p class="muted-text" style="font-size: 13px; color: var(--text-muted); font-style: italic; margin-top: 4px;">No email added</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Avatar Form -->
+        <form method="post" action="{% url 'update_avatar' %}" enctype="multipart/form-data" class="avatar-form">
+            {% csrf_token %}
+            <label style="font-size: 13px; font-weight: 700; color: var(--accent); margin-bottom: 4px;">Update Profile Picture</label>
+            <div style="display: flex; gap: 12px; align-items: center;">
+                <input type="file" name="avatar" accept="image/jpeg,image/png,image/webp" style="flex: 1; padding: 8px; font-size: 13px;">
+                <button type="submit" class="secondary-btn" style="padding: 10px 18px; font-size: 13px;">Save Picture</button>
+            </div>
+        </form>
+
+        <!-- Change Password Link -->
+        <div style="margin-top: 20px; border-top: 1.5px solid var(--border); padding-top: 20px; display: flex; gap: 12px;">
+            <a href="{% url 'password_change' %}" class="secondary-btn" style="text-decoration: none; padding: 10px 18px; font-size: 13px; display: inline-flex; align-items: center; gap: 6px; font-family: inherit;">
+                <span>🔒</span> {{ t.change_password }}
+            </a>
+        </div>
+
+        <!-- Profile Metadata Grid -->
+        <div class="profile-info-grid">
+            <div class="profile-info-box">
+                <p>{{ t.joined_since }}</p>
+                <strong>{{ user.date_joined|date:"d M Y" }}</strong>
+            </div>
+
+            <div class="profile-info-box">
+                <p>{{ t.current_level }}</p>
+                <strong>{{ level_info.icon }} {{ level_info.name }}</strong>
+            </div>
+
+            <div class="profile-info-box">
+                <p>{{ t.total_eco_score }}</p>
+                <strong>{{ total_points }} pts</strong>
+            </div>
+
+            <div class="profile-info-box">
+                <p>{{ t.actions_completed }}</p>
+                <strong>{{ action_count }}</strong>
+            </div>
+        </div>
+    </div>
+
+    <!-- Level Progress Card -->
+    <div class="card profile-level-card">
+        <div>
+            <p class="card-label">{{ t.level_progress }}</p>
+            <h2 style="font-size: 36px; font-weight: 800; color: var(--primary); font-family: 'Outfit', sans-serif; margin: 8px 0 12px;">{{ progress_percent }}%</h2>
+
+            <div class="progress-bar-container" style="height: 8px; background: #e5ecd8; margin-bottom: 16px;">
+                <div class="progress-bar-fill" style="width: {{ progress_percent|default:0 }}%;"></div>
+            </div>
+
+            <p class="muted-text" style="font-size: 14px; line-height: 1.5; color: var(--text-muted); margin-bottom: 16px;">{{ level_info.description }}</p>
+        </div>
+
+        {% if level_info.next_level %}
+            <strong class="next-level-text" style="font-size: 13px; font-weight: 700; color: var(--primary);">
+                🌱 {{ level_info.points_to_next }} pts left to reach {{ level_info.next_level }}
+            </strong>
+        {% else %}
+            <strong class="next-level-text" style="font-size: 13px; font-weight: 700; color: var(--emerald);">
+                🏆 Highest level reached! You are an Earth Guardian.
+            </strong>
+        {% endif %}
+    </div>
+</section>
+
+<!-- Language Settings Card -->
+<div class="card" style="margin-bottom: 32px; padding: 28px;">
+    <p class="card-label">{{ t.settings }}</p>
+    <h2 style="font-size: 20px; font-weight: 800; color: var(--accent); margin-bottom: 16px;">🌐 {{ t.select_language }}</h2>
+    
+    <form method="post" action="{% url 'set_language' %}" style="display: flex; gap: 12px; align-items: center; max-width: 450px;">
+        {% csrf_token %}
+        <select name="language" style="flex: 1; padding: 12px 16px; border-radius: var(--radius-md); border: 1.5px solid var(--border); background: var(--panel); color: var(--accent); font-family: inherit; font-size: 14px; font-weight: 700; cursor: pointer; transition: var(--transition); box-shadow: var(--shadow-sm);">
+            <option value="en" {% if current_lang == 'en' %}selected{% endif %}>🇺🇸 English</option>
+            <option value="vi" {% if current_lang == 'vi' %}selected{% endif %}>🇻🇳 Tiếng Việt</option>
+        </select>
+        <button type="submit" class="secondary-btn" style="padding: 12px 20px; font-size: 14px; font-weight: 800; border-radius: var(--radius-md); cursor: pointer; border: none; font-family: inherit; background: var(--primary); color: white;">
+            {{ t.save }}
+        </button>
+    </form>
+</div>
+
+<!-- Achievements / Badges Card -->
+<div class="card" style="margin-bottom: 32px;">
+    <div class="card-header">
+        <div>
+            <p class="card-label">{{ t.achievements }}</p>
+            <h2>{{ t.earned_badges }}</h2>
+        </div>
+    </div>
+
+    <div class="badges-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 20px;">
+        {% for item in badges %}
+            <div class="badge-card {% if item.is_earned %}earned{% else %}locked{% endif %}" style="background: {% if item.is_earned %}var(--primary-light){% else %}var(--bg){% endif %}; border: 1.5px solid {% if item.is_earned %}var(--primary){% else %}var(--border){% endif %}; border-radius: var(--radius-lg); padding: 20px 14px; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 8px; transition: var(--transition); opacity: {% if item.is_earned %}1{% else %}0.45{% endif %};">
+                <div class="badge-icon" style="font-size: 38px; line-height: 1; filter: {% if item.is_earned %}none{% else %}grayscale(100%){% endif %}; transition: var(--transition);">
+                    {{ item.badge.icon }}
+                </div>
+                <h4 style="font-size: 13px; font-weight: 800; color: var(--accent);">{{ item.badge.name }}</h4>
+                <p style="font-size: 10px; color: var(--text-muted); line-height: 1.3; margin: 0; min-height: 26px;">{{ item.badge.description }}</p>
+                
+                {% if item.is_earned %}
+                    <small style="font-size: 9px; font-weight: 800; color: var(--emerald); text-transform: uppercase; margin-top: 4px;">Earned</small>
+                {% else %}
+                    <small style="font-size: 9px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-top: 4px;">Locked</small>
+                {% endif %}
+            </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Habit Analytics & Stats Section -->
+<div class="profile-layout" style="margin-bottom: 32px; grid-template-columns: 1.2fr 1.8fr;">
+    <!-- Habit Analytics Chart -->
+    <div class="card" style="display: flex; flex-direction: column; align-items: center; padding: 28px;">
+        <p class="card-label" style="align-self: flex-start;">{{ t.habits }}</p>
+        <h2 style="align-self: flex-start; font-size: 20px; font-weight: 800; color: var(--accent); margin-bottom: 24px;">{{ t.green_habits }}</h2>
+
+        <!-- Custom CSS Conic-Gradient Donut Chart -->
+        <div class="habit-chart" style="width: 180px; height: 180px; border-radius: 50%; background: conic-gradient(
+            {% for item in habit_analytics %}
+                {{ item.color }} {{ item.start_percent }}% {{ item.end_percent }}%{% if not forloop.last %},{% endif %}
+            {% empty %}
+                #cbd8c5 0% 100%
+            {% endfor %}
+        ); box-shadow: var(--shadow-md); position: relative; display: grid; place-items: center; transition: var(--transition);">
+            <!-- Inner white circle for donut appearance -->
+            <div style="width: 124px; height: 124px; border-radius: 50%; background: var(--panel); display: flex; flex-direction: column; align-items: center; justify-content: center; box-shadow: inset var(--shadow-sm);">
+                <span style="font-size: 30px; font-weight: 800; color: var(--accent); font-family: 'Outfit', sans-serif;">{{ action_count }}</span>
+                <span style="font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">{{ t.actions }}</span>
+            </div>
+        </div>
+
+        <!-- Legend -->
+        <div style="width: 100%; display: flex; flex-direction: column; gap: 8px; margin-top: 24px;">
+            {% for item in habit_analytics %}
+                <div style="display: flex; justify-content: space-between; align-items: center; font-size: 12px;">
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <span style="width: 12px; height: 12px; border-radius: 3px; background: {{ item.color }}; display: inline-block;"></span>
+                        <span style="font-weight: 600; color: var(--accent);">{{ item.name }}</span>
+                    </div>
+                    <span style="font-weight: 700; color: var(--text-muted);">{{ item.count }} ({{ item.percent }}%)</span>
+                </div>
+            {% empty %}
+                <p style="font-size: 13px; color: var(--text-muted); font-style: italic; text-align: center;">No activity statistics yet.</p>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Personal Stats Cards -->
+    <div style="display: flex; flex-direction: column; gap: 24px;">
+        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px;">
+            <div class="card">
+                <p class="card-label">{{ t.most_common_category }}</p>
+                <h2 style="font-size: 20px; font-weight: 800; color: var(--accent); margin: 6px 0 2px;">{{ most_common_category }}</h2>
+                <p class="muted-text" style="font-size: 13px; color: var(--text-muted);">{{ most_common_category_count }} actions uploaded</p>
+            </div>
+
+            <div class="card">
+                <p class="card-label">{{ t.eco_identity }}</p>
+                <h2 style="font-size: 20px; font-weight: 800; color: var(--primary); margin: 6px 0 2px;">{{ impact_level }}</h2>
+                <p class="muted-text" style="font-size: 13px; color: var(--text-muted);">Your current environmental level.</p>
+            </div>
+        </div>
+
+        <div class="card" style="flex: 1; display: flex; flex-direction: column; justify-content: center;">
+            <p class="card-label">{{ t.next_goal }}</p>
+            {% if level_info.next_level %}
+                <h2 style="font-size: 22px; font-weight: 800; color: var(--accent); margin: 6px 0 4px;">{{ level_info.next_level }}</h2>
+                <p class="muted-text" style="font-size: 13px; color: var(--text-muted);">Keep uploading actions to unlock new badges and reach your next level!</p>
+            {% else %}
+                <h2 style="font-size: 22px; font-weight: 800; color: var(--emerald); margin: 6px 0 4px;">Max Level</h2>
+                <p class="muted-text" style="font-size: 13px; color: var(--text-muted);">Congratulations! You have completed the full level roadmap.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Recent Activity Section -->
+<div class="card">
+    <div class="card-header">
+        <div>
+            <p class="card-label">{{ t.recent_activity }}</p>
+            <h2>{{ t.your_latest_eco_actions }}</h2>
+        </div>
+        <a href="{% url 'my_progress' %}">
+            <button class="secondary-btn" style="padding: 8px 16px; font-size: 13px;">View all</button>
+        </a>
+    </div>
+
+    <div class="profile-recent-grid">
+        {% for action in recent_actions %}
+            <div class="profile-action-card">
+                {% if action.image %}
+                    <img src="{{ action.image.url }}" alt="{{ action.caption }}">
+                {% else %}
+                    <div style="height: 120px; width: 100%; display: grid; place-items: center; font-size: 32px; background: var(--primary-light);">🌱</div>
+                {% endif %}
+
+                <div class="profile-action-info">
+                    <h4>{{ action.get_category_display }}</h4>
+                    <p>{{ action.caption }}</p>
+                    <strong>+{{ action.points }} pts</strong>
+                </div>
+            </div>
+        {% empty %}
+            <div style="grid-column: 1 / -1; width: 100%;">
+                <p class="muted-text" style="text-align: center; font-style: italic; padding: 20px;">No recent actions yet.</p>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="card delete-card">
+    <h2>{% if current_lang == 'vi' %}Xóa hành động Eco?{% else %}Delete Eco Action?{% endif %}</h2>
+
+    <p class="muted-text">
+        {% if current_lang == 'vi' %}Hành động này sẽ bị xóa vĩnh viễn khỏi hồ sơ của bạn và điểm số của bạn sẽ giảm tương ứng.{% else %}This action will be permanently removed from your profile and your points will decrease.{% endif %}
+    </p>
+
+    <div class="delete-preview">
+        {% if eco_action.image %}
+            <img src="{{ eco_action.image.url }}" alt="{{ eco_action.caption }}">
+        {% else %}
+            <div class="gallery-placeholder">🌱</div>
+        {% endif %}
+
+        <div>
+            <h3>{{ eco_action.get_category_display }}</h3>
+            <p>{{ eco_action.caption }}</p>
+            <strong>+{{ eco_action.points }} {% if current_lang == 'vi' %}điểm{% else %}pts{% endif %}</strong>
+        </div>
+    </div>
+
+    <form method="post" class="delete-actions">
+        {% csrf_token %}
+
+        <button type="submit" class="danger-btn">{% if current_lang == 'vi' %}Xác nhận Xóa{% else %}Yes, Delete{% endif %}</button>
+
+        <a href="{% url 'my_progress' %}">
+            <button type="button" class="secondary-btn">{{ t.cancel }}</button>
+        </a>
+    </form>
+</div>
+
+{% endblock %}

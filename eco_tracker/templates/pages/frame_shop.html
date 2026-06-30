@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="shop-container" style="max-width: 1000px; margin: 0 auto; display: flex; flex-direction: column; gap: 32px;">
+    
+    <!-- Available Points Header Card -->
+    <div class="card" style="background: linear-gradient(135deg, var(--panel), var(--primary-light)); display: flex; justify-content: space-between; align-items: center; padding: 32px; border-radius: var(--radius-xl); border: 1.5px solid var(--primary-glow);">
+        <div>
+            <p class="card-label" style="color: var(--primary); font-weight: 800;">{% if current_lang == 'vi' %}SỐ DƯ CỦA BẠN{% else %}YOUR BALANCE{% endif %}</p>
+            <h2 style="font-size: 36px; font-weight: 800; color: var(--accent); font-family: 'Outfit', sans-serif; margin-top: 4px;">
+                {{ available_points }} <span style="font-size: 20px; font-weight: 600; color: var(--text-muted);">{% if current_lang == 'vi' %}điểm hiện có{% else %}pts available{% endif %}</span>
+            </h2>
+            <p class="muted-text" style="font-size: 13px; margin-top: 4px; color: var(--text-muted);">
+                {% if current_lang == 'vi' %}Tổng điểm tích lũy: <strong>{{ total_points }} điểm</strong> (tiêu điểm không ảnh hưởng đến thứ hạng của bạn).{% else %}Total all-time score: <strong>{{ total_points }} pts</strong> (spending points does not affect your Leaderboard rank).{% endif %}
+            </p>
+        </div>
+        
+        <!-- Active Frame Preview -->
+        <div style="text-align: center; display: flex; flex-direction: column; align-items: center; gap: 8px;">
+            <p class="card-label" style="font-size: 11px;">{% if current_lang == 'vi' %}Khung đang sử dụng{% else %}Equipped Frame{% endif %}</p>
+            <div style="position: relative; width: 80px; height: 80px; border-radius: 50%; background: var(--bg); display: grid; place-items: center; font-size: 32px; box-shadow: var(--shadow-sm); border: 2px solid var(--border); overflow: visible;">
+                <!-- Avatar icon -->
+                👤
+                <!-- Equipped Frame Border overlay -->
+                {% if active_frame %}
+                    <div style="position: absolute; top: -4px; left: -4px; right: -4px; bottom: -4px; border-radius: 50%; pointer-events: none; {{ active_frame.css_style }}"></div>
+                {% endif %}
+            </div>
+            <span style="font-size: 12px; font-weight: 700; color: var(--accent);">
+                {% if active_frame %}{{ active_frame.name }}{% else %}{% if current_lang == 'vi' %}Mặc định{% else %}Default Profile{% endif %}{% endif %}
+            </span>
+        </div>
+    </div>
+
+    <!-- Shop Grid -->
+    <div>
+        <h2 style="font-size: 24px; font-weight: 800; color: var(--accent); font-family: 'Outfit', sans-serif; margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
+            <span>🛍️</span> {{ t.frame_shop_title }}
+        </h2>
+        
+        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 24px;">
+            {% for item in frames %}
+                <div class="card" style="display: flex; flex-direction: column; gap: 20px; text-align: center; align-items: center; padding: 28px; position: relative;">
+                    
+                    <!-- Frame Preview -->
+                    <div style="position: relative; width: 90px; height: 90px; border-radius: 50%; background: var(--bg); display: grid; place-items: center; font-size: 36px; margin-top: 12px; box-shadow: var(--shadow-sm); border: 2.5px solid var(--border);">
+                        👤
+                        <!-- Animated border overlay -->
+                        <div style="position: absolute; top: -5px; left: -5px; right: -5px; bottom: -5px; border-radius: 50%; pointer-events: none; {{ item.frame.css_style }}"></div>
+                    </div>
+ 
+                    <!-- Details -->
+                    <div>
+                        <h3 style="font-size: 18px; font-weight: 800; color: var(--accent); margin-bottom: 6px; font-family: 'Outfit', sans-serif; display: flex; align-items: center; justify-content: center; gap: 6px;">
+                            <span>{{ item.frame.preview_emoji }}</span>
+                            {% if current_lang == 'vi' %}
+                                {% if item.frame.code == 'emerald_glow' %}Lục Bảo Phát Sáng
+                                {% elif item.frame.code == 'solar_neon' %}Mặt Trời Neon
+                                {% elif item.frame.code == 'cosmic_forest' %}Vũ Trụ Thiên Hà
+                                {% elif item.frame.code == 'ocean_deep' %}Đại Dương Sâu
+                                {% elif item.frame.code == 'aurora_borealis' %}Cực Quang Cực Bắc
+                                {% elif item.frame.code == 'lava_magma' %}Dung Nham Núi Lửa
+                                {% elif item.frame.code == 'sakura_bloom' %}Anh Đào Nở Rộ
+                                {% elif item.frame.code == 'cyber_punk' %}Ma Trận Cyber
+                                {% elif item.frame.code == 'golden_royalty' %}Hoàng Kim Vương Giả
+                                {% elif item.frame.code == 'wind_whisperer' %}Làn Gió Sống Xanh
+                                {% else %}{{ item.frame.name }}
+                                {% endif %}
+                            {% else %}
+                                {{ item.frame.name }}
+                            {% endif %}
+                        </h3>
+                        <p class="muted-text" style="font-size: 11.5px; color: var(--text-muted); line-height: 1.4; min-height: 50px;">
+                            {% if current_lang == 'vi' %}
+                                {% if item.frame.code == 'emerald_glow' %}Trang trí ảnh đại diện với hiệu ứng viền phát sáng ngọc lục bảo.
+                                {% elif item.frame.code == 'solar_neon' %}Hào quang mặt trời cam rực rỡ mang đầy năng lượng tích cực.
+                                {% elif item.frame.code == 'cosmic_forest' %}Viền tinh thể đứt nét xoay tròn huyền bí mang phong cách vũ trụ.
+                                {% elif item.frame.code == 'ocean_deep' %}Khung viền sóng nước đại dương xanh ngắt tỏa ra xung quanh.
+                                {% elif item.frame.code == 'aurora_borealis' %}Dải cực quang đổi màu cầu vồng ảo diệu chuyển động mượt mà.
+                                {% elif item.frame.code == 'lava_magma' %}Ngọn lửa núi lửa đỏ rực bốc cháy bảo vệ ảnh đại diện của bạn.
+                                {% elif item.frame.code == 'sakura_bloom' %}Cánh hoa anh đào lãng mạn nhẹ nhàng đung đưa xung quanh.
+                                {% elif item.frame.code == 'cyber_punk' %}Hào quang ma trận neon kép hồng xanh mang đậm nét công nghệ tương lai.
+                                {% elif item.frame.code == 'golden_royalty' %}Khung hoàng gia vàng kim chói lọi tôn vinh hộ vệ Trái Đất.
+                                {% elif item.frame.code == 'wind_whisperer' %}Những chiếc lá xanh thì thầm xoay quanh ảnh đại diện của bạn.
+                                {% else %}Trang trí ảnh đại diện của bạn với hiệu ứng viền hoạt họa độc quyền này.
+                                {% endif %}
+                            {% else %}
+                                {% if item.frame.code == 'emerald_glow' %}Decorate your profile with a glowing green emerald ring.
+                                {% elif item.frame.code == 'solar_neon' %}A high-voltage orange solar storm pulsates around your avatar.
+                                {% elif item.frame.code == 'cosmic_forest' %}A mystical rotating dotted boundary inspired by green galaxies.
+                                {% elif item.frame.code == 'ocean_deep' %}A refreshing blue wave outline projecting fresh oceanic water.
+                                {% elif item.frame.code == 'aurora_borealis' %}Beautiful animated polar lights with colorful rotating gradient paths.
+                                {% elif item.frame.code == 'lava_magma' %}A fiery red volcanic flame barrier protecting your profile photo.
+                                {% elif item.frame.code == 'sakura_bloom' %}Soft pink blossom vibes with a smooth breathing halo effect.
+                                {% elif item.frame.code == 'cyber_punk' %}Double neon cyber ring borders radiating futuristic magenta/cyan lights.
+                                {% elif item.frame.code == 'golden_royalty' %}A dazzling luxury gold border designed for true Earth Guardians.
+                                {% elif item.frame.code == 'wind_whisperer' %}Gentle green leaves dancing and spinning around your profile avatar.
+                                {% else %}Decorate your profile avatar with this exclusive animated effect.
+                                {% endif %}
+                            {% endif %}
+                        </p>
+                    </div>
+ 
+                    <!-- Cost / Status -->
+                    <div style="width: 100%; display: flex; flex-direction: column; gap: 12px; margin-top: auto;">
+                        {% if not item.owned %}
+                            <!-- Buy Button -->
+                            <form method="post" action="{% url 'frame_shop' %}" style="width: 100%;">
+                                {% csrf_token %}
+                                <input type="hidden" name="frame_code" value="{{ item.frame.code }}">
+                                <input type="hidden" name="action" value="purchase">
+                                <button type="submit" class="upload-btn" style="width: 100%; justify-content: center; font-size: 13px; font-weight: 800; padding: 11px; display: flex; align-items: center; gap: 6px; border-radius: var(--radius-md);" {% if available_points < item.frame.cost %}disabled style="opacity: 0.5; cursor: not-allowed; background: var(--border); color: var(--text-muted); box-shadow: none;"{% endif %}>
+                                    <span>🛒</span> {% if current_lang == 'vi' %}Mua với {{ item.frame.cost }} điểm{% else %}Buy for {{ item.frame.cost }} pts{% endif %}
+                                </button>
+                            </form>
+                        {% else %}
+                            <!-- Equip / Unequip Buttons -->
+                            {% if item.equipped %}
+                                <form method="post" action="{% url 'frame_shop' %}" style="width: 100%;">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="frame_code" value="{{ item.frame.code }}">
+                                    <input type="hidden" name="action" value="unequip">
+                                    <button type="submit" class="danger-btn" style="width: 100%; justify-content: center; font-size: 13px; font-weight: 800; padding: 11px; border-radius: var(--radius-md); border: none; cursor: pointer;">
+                                        {{ t.unequip }}
+                                    </button>
+                                </form>
+                            {% else %}
+                                <form method="post" action="{% url 'frame_shop' %}" style="width: 100%;">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="frame_code" value="{{ item.frame.code }}">
+                                    <input type="hidden" name="action" value="equip">
+                                    <button type="submit" class="secondary-btn" style="width: 100%; justify-content: center; font-size: 13px; font-weight: 800; padding: 11px; border-radius: var(--radius-md); border: 1.5px solid var(--primary); cursor: pointer; color: var(--primary);">
+                                        {{ t.equip }}
+                                    </button>
+                                </form>
+                            {% endif %}
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

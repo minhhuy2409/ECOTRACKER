@@ -1,0 +1,55 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - EcoTracker</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body class="login-page">
+
+<script>
+    // Immediate script to apply theme before rendering
+    (function() {
+        const currentTheme = localStorage.getItem('theme') || 'light';
+        if (currentTheme === 'dark') {
+            document.body.classList.add('dark-mode');
+        }
+    })();
+</script>
+
+<div class="login-card">
+    <div class="login-header">
+        <h1>🌱 EcoTracker</h1>
+        <p>Login to continue your eco journey</p>
+    </div>
+
+    {% if messages %}
+        <div class="message-container">
+            {% for message in messages %}
+                <div class="message-box {{ message.tags }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <form method="post" class="eco-form">
+        {% csrf_token %}
+        <div class="form-fields-wrapper">
+            {{ form.as_p }}
+        </div>
+
+        <button type="submit" class="upload-btn auth-submit-btn">Login</button>
+    </form>
+
+    <p class="auth-link">
+        Don't have an account?
+        <a href="{% url 'register' %}">Register here</a>
+    </p>
+</div>
+
+</body>
+</html>

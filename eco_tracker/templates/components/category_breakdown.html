@@ -1,0 +1,25 @@
+<div class="card category-card">
+    <div class="card-header">
+        <div>
+            <p class="card-label">{% if current_lang == 'vi' %}Phân tích danh mục{% else %}Category Breakdown{% endif %}</p>
+            <h2>{% if current_lang == 'vi' %}Trọng tâm Eco của bạn{% else %}Your Eco Focus{% endif %}</h2>
+        </div>
+    </div>
+
+    <div class="category-list">
+        {% for category in category_breakdown %}
+            <div class="category-row">
+                <div>
+                    <h4>{{ category.name }}</h4>
+                    <p>{{ category.actions }} {% if current_lang == 'vi' %}hành động{% else %}actions{% endif %}</p>
+                </div>
+
+                <strong>{{ category.points }} {% if current_lang == 'vi' %}điểm{% else %}pts{% endif %}</strong>
+            </div>
+        {% empty %}
+            <p class="empty-text">
+                {% if current_lang == 'vi' %}Chưa có dữ liệu danh mục nào. Hãy chia sẻ hành động đầu tiên của bạn.{% else %}No category data yet. Upload your first action.{% endif %}
+            </p>
+        {% endfor %}
+    </div>
+</div>

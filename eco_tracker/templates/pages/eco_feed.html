@@ -1,0 +1,266 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div style="max-width: 680px; margin: 0 auto; display: flex; flex-direction: column; gap: 28px;">
+    <!-- Feed List -->
+    <div class="feed-container" style="display: flex; flex-direction: column; gap: 24px;">
+        {% for action in actions %}
+            <div class="card feed-card" style="padding: 24px; display: flex; flex-direction: column; gap: 16px;">
+                <!-- User Info Header -->
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <div style="position: relative; width: 44px; height: 44px; flex-shrink: 0;">
+                            {% if action.user.profile.avatar %}
+                                <img src="{{ action.user.profile.avatar.url }}" alt="{{ action.user.username }}" style="width: 100%; height: 100%; border-radius: 50%; border: 2px solid var(--primary); object-fit: cover; display: block;">
+                            {% else %}
+                                <div class="ranking-avatar" style="width: 100%; height: 100%; border-radius: 50%; background: var(--primary-light); border: 2px solid var(--primary); color: var(--primary); font-weight: 800; display: grid; place-items: center; font-size: 18px; margin: 0;">
+                                    {{ action.user.username|first|upper }}
+                                </div>
+                            {% endif %}
+                            {% if action.user.profile.active_frame %}
+                                <div style="position: absolute; top: -4px; left: -4px; right: -4px; bottom: -4px; border-radius: 50%; pointer-events: none; z-index: 2; {{ action.user.profile.active_frame.css_style }}"></div>
+                            {% endif %}
+                        </div>
+                        
+                        <div>
+                            <h4 style="font-size: 15px; font-weight: 700; color: var(--accent); display: flex; align-items: center; gap: 6px; margin: 0;">
+                                {{ action.user.username }}
+                                {% if action.user == user %}
+                                    <span class="ranking-level-badge" style="margin: 0; font-size: 10px;">{% if current_lang == 'vi' %}Bạn{% else %}You{% endif %}</span>
+                                {% endif %}
+                            </h4>
+                            <small style="font-size: 11px; color: var(--text-muted); font-weight: 600;">
+                                {{ action.created_at|date:"d M Y, H:i" }}
+                            </small>
+                        </div>
+                    </div>
+ 
+                     <!-- Streak Badge if Active -->
+                    {% if action.user.profile.streak_count > 1 %}
+                        <div class="challenge-status success-text" style="padding: 4px 10px; font-size: 11px; font-weight: 700; display: flex; align-items: center; gap: 4px; border-radius: var(--radius-sm);">
+                            <span class="streak-badge-fire">🔥</span> {{ action.user.profile.streak_count }}-{% if current_lang == 'vi' %}ngày liên tiếp{% else %}day streak{% endif %}
+                        </div>
+                    {% endif %}
+                </div>
+ 
+                 <!-- Action Image -->
+                {% if action.image %}
+                    <div class="feed-image-wrapper" style="position: relative; height: 320px; width: 100%; border-radius: var(--radius-md); overflow: hidden; border: 1px solid var(--border); background: var(--bg);">
+                        <img src="{{ action.image.url }}" alt="{{ action.caption }}" style="width: 100%; height: 100%; object-fit: cover;">
+                        {% if action.ai_status == 'pending' %}
+                            <span class="gallery-points-tag" style="top: 16px; right: 16px; background: var(--primary-glow); color: var(--primary); font-weight: 800;">⏱️ {% if current_lang == 'vi' %}Đang phân tích...{% else %}AI analyzing...{% endif %}</span>
+                        {% elif action.ai_status == 'rejected' %}
+                            <span class="gallery-points-tag" style="top: 16px; right: 16px; background: rgba(220,53,69,0.15); color: #dc3545; font-weight: 800;">❌ {% if current_lang == 'vi' %}Bị từ chối{% else %}Rejected{% endif %}</span>
+                        {% else %}
+                            <span class="gallery-points-tag" style="top: 16px; right: 16px;">+{{ action.points }} {% if current_lang == 'vi' %}điểm{% else %}pts{% endif %}</span>
+                        {% endif %}
+                    </div>
+                {% endif %}
+ 
+                 <!-- Content Area -->
+                <div style="display: flex; flex-direction: column; gap: 8px;">
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        {% if action.ai_status == 'pending' %}
+                            <span class="level-badge" style="font-size: 11px; padding: 3px 8px; text-transform: uppercase; background: var(--primary-light); color: var(--primary);">
+                                ⏱️ {% if current_lang == 'vi' %}Chờ duyệt AI{% else %}AI Pending{% endif %}
+                            </span>
+                        {% elif action.ai_status == 'rejected' %}
+                            <span class="level-badge" style="font-size: 11px; padding: 3px 8px; text-transform: uppercase; background: rgba(220,53,69,0.15); color: #dc3545;">
+                                ❌ {% if current_lang == 'vi' %}Không hợp lệ{% else %}Invalid{% endif %}
+                            </span>
+                        {% else %}
+                            <span class="level-badge" style="font-size: 11px; padding: 3px 8px; text-transform: uppercase;">
+                                {{ action.get_category_display }}
+                            </span>
+                        {% endif %}
+                    </div>
+                    <p style="font-size: 14px; line-height: 1.5; color: var(--text-main); font-weight: 500; margin: 4px 0;">
+                        {{ action.caption }}
+                    </p>
+                </div>
+ 
+                 <!-- AI Explanation Bubble -->
+                 <div style="border-radius: var(--radius-md); padding: 14px; border: 1.5px solid var(--border); display: flex; gap: 10px; align-items: flex-start; margin-top: 4px;
+                     {% if action.ai_status == 'pending' %}
+                         background: var(--primary-glow);
+                     {% elif action.ai_status == 'rejected' %}
+                         background: rgba(220,53,69,0.08); border-color: rgba(220,53,69,0.2);
+                     {% else %}
+                         background: var(--primary-light);
+                     {% endif %}
+                 ">
+                     <span style="font-size: 18px; line-height: 1;">
+                         {% if action.ai_status == 'pending' %}
+                             ⏱️
+                         {% elif action.ai_status == 'rejected' %}
+                             ❌
+                         {% else %}
+                             💡
+                         {% endif %}
+                     </span>
+                     <p style="font-size: 12px; font-weight: 600; line-height: 1.4; margin: 0;
+                         {% if action.ai_status == 'pending' %}
+                             color: var(--primary);
+                         {% elif action.ai_status == 'rejected' %}
+                             color: #dc3545;
+                         {% else %}
+                             color: var(--primary);
+                         {% endif %}
+                     ">
+                         {% if action.ai_status == 'pending' %}
+                             {% if current_lang == 'vi' %}AI đang phân tích và xác thực hoạt động này...{% else %}AI is currently analyzing and verifying this action...{% endif %}
+                         {% elif action.ai_status == 'rejected' %}
+                              {% if current_lang == 'vi' %}Hành động bị từ chối: {{ action.ai_reason }}{% else %}Action rejected by AI: {{ action.ai_reason }}{% endif %}
+                         {% else %}
+                              {% if current_lang == 'vi' %}Đã được AI xác minh: {{ action.ai_reason|default:"Hành động đại diện cho hoạt động sống xanh lành mạnh." }}{% else %}Verified by AI: {{ action.ai_reason|default:"This action represents a healthy green activity." }}{% endif %}
+                         {% endif %}
+                     </p>
+                 </div>
+ 
+                 <!-- Reactions Bar -->
+                <div style="border-top: 1px solid var(--border); padding-top: 14px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+                    <!-- Reaction: Like (💚) -->
+                    <button class="reaction-btn {% if action.reactions_data.like.active %}active{% endif %}" data-action-id="{{ action.id }}" data-reaction-type="like" style="background: none; border: 1.5px solid var(--border); border-radius: 20px; padding: 6px 12px; font-size: 13px; font-weight: 700; display: flex; align-items: center; gap: 6px; cursor: pointer; color: var(--text-muted); transition: var(--transition);">
+                        <span class="reaction-icon" style="transition: transform 0.2s ease;">💚</span> 
+                        <span class="reaction-count" style="background: var(--border); color: var(--text-main); padding: 2px 6px; border-radius: 10px; font-size: 11px; margin-left: 2px;">{{ action.reactions_data.like.count }}</span>
+                    </button>
+ 
+                     <!-- Reaction: Recycle (♻️) -->
+                    <button class="reaction-btn {% if action.reactions_data.recycle.active %}active{% endif %}" data-action-id="{{ action.id }}" data-reaction-type="recycle" style="background: none; border: 1.5px solid var(--border); border-radius: 20px; padding: 6px 12px; font-size: 13px; font-weight: 700; display: flex; align-items: center; gap: 6px; cursor: pointer; color: var(--text-muted); transition: var(--transition);">
+                        <span class="reaction-icon" style="transition: transform 0.2s ease;">♻️</span> 
+                        <span class="reaction-count" style="background: var(--border); color: var(--text-main); padding: 2px 6px; border-radius: 10px; font-size: 11px; margin-left: 2px;">{{ action.reactions_data.recycle.count }}</span>
+                    </button>
+ 
+                     <!-- Reaction: Tree (🌳) -->
+                    <button class="reaction-btn {% if action.reactions_data.tree.active %}active{% endif %}" data-action-id="{{ action.id }}" data-reaction-type="tree" style="background: none; border: 1.5px solid var(--border); border-radius: 20px; padding: 6px 12px; font-size: 13px; font-weight: 700; display: flex; align-items: center; gap: 6px; cursor: pointer; color: var(--text-muted); transition: var(--transition);">
+                        <span class="reaction-icon" style="transition: transform 0.2s ease;">🌳</span> 
+                        <span class="reaction-count" style="background: var(--border); color: var(--text-main); padding: 2px 6px; border-radius: 10px; font-size: 11px; margin-left: 2px;">{{ action.reactions_data.tree.count }}</span>
+                    </button>
+ 
+                     <!-- Reaction: Energy (⚡) -->
+                    <button class="reaction-btn {% if action.reactions_data.energy.active %}active{% endif %}" data-action-id="{{ action.id }}" data-reaction-type="energy" style="background: none; border: 1.5px solid var(--border); border-radius: 20px; padding: 6px 12px; font-size: 13px; font-weight: 700; display: flex; align-items: center; gap: 6px; cursor: pointer; color: var(--text-muted); transition: var(--transition);">
+                        <span class="reaction-icon" style="transition: transform 0.2s ease;">⚡</span> 
+                        <span class="reaction-count" style="background: var(--border); color: var(--text-main); padding: 2px 6px; border-radius: 10px; font-size: 11px; margin-left: 2px;">{{ action.reactions_data.energy.count }}</span>
+                    </button>
+                </div>
+            </div>
+        {% empty %}
+            {% if current_lang == 'vi' %}
+                {% include "components/empty_state.html" with icon="🌍" title="Bản tin trống" message="Hãy kết nối với bạn bè hoặc tham gia các nhóm Eco để xem các hành động sống xanh thực tế tại đây!" button_url="/friends/" button_text="Thêm Bạn bè" %}
+            {% else %}
+                {% include "components/empty_state.html" with icon="🌍" title="Feed is empty" message="Connect with friends or join eco groups to see real-world green actions here!" button_url="/friends/" button_text="Add Friends" %}
+            {% endif %}
+        {% endfor %}
+    </div>
+</div>
+
+<script>
+    // AJAX CSRF Token Helper
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    // Toggle Reactions
+    document.addEventListener("DOMContentLoaded", function() {
+        // Initialize button styles
+        document.querySelectorAll(".reaction-btn").forEach(function(btn) {
+            if (btn.classList.contains("active")) {
+                applyActiveStyle(btn);
+            }
+        });
+
+        function applyActiveStyle(btn) {
+            btn.style.borderColor = "var(--primary)";
+            btn.style.color = "var(--primary)";
+            btn.style.background = "var(--primary-light)";
+            const countSpan = btn.querySelector(".reaction-count");
+            if (countSpan) {
+                countSpan.style.background = "var(--primary)";
+                countSpan.style.color = "white";
+            }
+        }
+
+        function applyInactiveStyle(btn) {
+            btn.style.borderColor = "var(--border)";
+            btn.style.color = "var(--text-muted)";
+            btn.style.background = "none";
+            const countSpan = btn.querySelector(".reaction-count");
+            if (countSpan) {
+                countSpan.style.background = "var(--border)";
+                countSpan.style.color = "var(--text-main)";
+            }
+        }
+
+        document.querySelectorAll(".reaction-btn").forEach(function(btn) {
+            btn.addEventListener("click", async function() {
+                const actionId = this.dataset.actionId;
+                const reactionType = this.dataset.reactionType;
+                const icon = this.querySelector(".reaction-icon");
+                const countSpan = this.querySelector(".reaction-count");
+
+                // Micro-animation trigger
+                icon.style.transform = "scale(1.4) rotate(-15deg)";
+                setTimeout(() => {
+                    icon.style.transform = "scale(1) rotate(0deg)";
+                }, 200);
+
+                // Prepare Form Data for POST
+                const formData = new FormData();
+                formData.append("reaction_type", reactionType);
+
+                try {
+                    const response = await fetch(`/actions/${actionId}/react/`, {
+                        method: "POST",
+                        headers: {
+                            "X-CSRFToken": getCookie("csrftoken")
+                        },
+                        body: formData
+                    });
+                    const data = await response.json();
+
+                    if (data.success) {
+                        // Find all reaction buttons for this action, update their counts
+                        const actionContainer = this.parentElement;
+                        const buttons = actionContainer.querySelectorAll(".reaction-btn");
+                        
+                        buttons.forEach(button => {
+                            const type = button.dataset.reactionType;
+                            const newCount = data.counts[type];
+                            const countSpanEl = button.querySelector(".reaction-count");
+                            if (countSpanEl) {
+                                countSpanEl.textContent = newCount;
+                            }
+                            
+                            // Update active state of clicked button
+                            if (type === reactionType) {
+                                if (data.reacted) {
+                                    button.classList.add("active");
+                                    applyActiveStyle(button);
+                                } else {
+                                    button.classList.remove("active");
+                                    applyInactiveStyle(button);
+                                }
+                            }
+                        });
+                    }
+                } catch (error) {
+                    console.error("Reaction request failed:", error);
+                }
+            });
+        });
+    });
+</script>
+
+{% endblock %}

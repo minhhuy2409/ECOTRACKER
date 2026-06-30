@@ -1,0 +1,39 @@
+<div class="card progress-card">
+    <div class="card-header">
+        <div>
+            <p class="card-label">{% if current_lang == 'vi' %}Tiến trình Cấp độ Eco{% else %}Eco Level Progress{% endif %}</p>
+            <h2>
+                {{ level_info.icon|default:"🌱" }}
+                {{ level_info.name|default:"Eco Beginner" }}
+            </h2>
+        </div>
+
+        <span class="level-badge">{{ progress_percent|default:0 }}%</span>
+    </div>
+
+    <div class="progress-bar-container">
+        <div class="progress-bar-fill" style="width: {{ progress_percent|default:0 }}%;"></div>
+    </div>
+
+    <div class="level-meta" style="margin-top: 14px; display: flex; flex-direction: column; gap: 4px;">
+        <p style="font-size: 13px; color: var(--text-muted); font-weight: 500;">
+            {% if current_lang == 'vi' %}
+                {{ level_info.description_vi|default:"Hãy bắt đầu tải lên hình ảnh hành động sống xanh để gia tăng mức độ tác động của bạn." }}
+            {% else %}
+                {{ level_info.description|default:"Start uploading eco actions to grow your impact." }}
+            {% endif %}
+        </p>
+
+        {% if level_info.next_level %}
+            <small style="font-size: 11px; font-weight: 700; color: var(--primary);">
+                {% if current_lang == 'vi' %}
+                    Cần thêm {{ level_info.points_to_next }} điểm nữa để đạt cấp độ {{ level_info.next_level }}
+                {% else %}
+                    {{ level_info.points_to_next }} pts left to reach {{ level_info.next_level }}
+                {% endif %}
+            </small>
+        {% else %}
+            <small style="font-size: 11px; font-weight: 700; color: var(--emerald);">{% if current_lang == 'vi' %}Bạn đã đạt cấp độ cao nhất.{% else %}You have reached the highest level.{% endif %}</small>
+        {% endif %}
+    </div>
+</div>

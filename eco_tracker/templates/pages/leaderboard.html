@@ -1,0 +1,176 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<section class="dashboard-grid" style="margin-bottom: 32px;">
+    <div class="card stat-card">
+        <p class="card-label">{% if current_lang == 'vi' %}Hạng của bạn{% else %}Your Rank{% endif %}</p>
+        {% if user_rank %}
+            <h2 style="color: var(--primary);">#{{ user_rank }}</h2>
+        {% else %}
+            <h2>—</h2>
+        {% endif %}
+        <p class="muted-text">{% if current_lang == 'vi' %}Thứ hạng của bạn trên bảng xếp hạng toàn cầu.{% else %}Your position in the global leaderboard.{% endif %}</p>
+    </div>
+
+    <div class="card stat-card">
+        <p class="card-label">{% if current_lang == 'vi' %}Điểm của bạn{% else %}Your Points{% endif %}</p>
+        <h2 style="color: var(--emerald);">{{ user_total_points }} {% if current_lang == 'vi' %}điểm{% else %}pts{% endif %}</h2>
+        <p class="muted-text">{% if current_lang == 'vi' %}Tổng điểm Eco của bạn.{% else %}Your total eco score.{% endif %}</p>
+    </div>
+
+    <div class="card stat-card">
+        <p class="card-label">{% if current_lang == 'vi' %}Hành động của bạn{% else %}Your Actions{% endif %}</p>
+        <h2 style="color: var(--accent);">{{ user_total_actions }}</h2>
+        <p class="muted-text">{% if current_lang == 'vi' %}Hành động Eco bạn đã tải lên.{% else %}Eco actions you uploaded.{% endif %}</p>
+    </div>
+</section>
+
+<!-- Top 3 Podium -->
+{% if leaderboard_users|length >= 1 %}
+<div class="card" style="margin-bottom: 32px; display: flex; flex-direction: column; align-items: center; padding: 32px;">
+    <p class="card-label" style="align-self: flex-start;">{% if current_lang == 'vi' %}Bục danh vọng{% else %}Leaderboard Podium{% endif %}</p>
+    <h2 style="align-self: flex-start; font-size: 22px; font-weight: 800; color: var(--accent); margin-bottom: 24px;">{% if current_lang == 'vi' %}Nhà Vô địch Eco Hàng đầu{% else %}Top Eco Champions{% endif %}</h2>
+    
+    <div class="podium-container" style="display: flex; align-items: flex-end; justify-content: center; gap: 28px; width: 100%; max-width: 600px; margin: 32px auto 16px;">
+        <!-- 2nd Place -->
+        {% for item in leaderboard_users|slice:"1:2" %}
+            <div class="podium-column podium-2nd" style="display: flex; flex-direction: column; align-items: center; flex: 1; min-width: 120px;">
+                <div class="podium-avatar-wrapper" style="position: relative; width: 76px; height: 76px; margin-bottom: 14px;">
+                    {% if item.user.profile.avatar %}
+                        <img src="{{ item.user.profile.avatar.url }}" alt="{{ item.user.username }}" class="podium-avatar" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 3px solid var(--silver); box-shadow: var(--shadow-sm); display: block;">
+                    {% else %}
+                        <div class="podium-avatar" style="width: 100%; height: 100%; border-radius: 50%; background: var(--panel); border: 3px solid var(--silver); display: grid; place-items: center; font-size: 24px; font-weight: 800; color: var(--accent); box-shadow: var(--shadow-sm);">
+                            {{ item.user.username|first|upper }}
+                        </div>
+                    {% endif %}
+                    {% if item.user.profile.active_frame %}
+                        <div style="position: absolute; top: -5px; left: -5px; right: -5px; bottom: -5px; border-radius: 50%; pointer-events: none; z-index: 2; {{ item.user.profile.active_frame.css_style }}"></div>
+                    {% endif %}
+                    <div class="podium-rank-badge" style="position: absolute; bottom: -6px; left: 50%; transform: translateX(-50%); width: 24px; height: 24px; border-radius: 50%; background: var(--silver); color: white; display: grid; place-items: center; font-weight: 800; font-size: 11px; box-shadow: var(--shadow-sm); z-index: 3;">2</div>
+                </div>
+                <div class="podium-name" style="font-size: 14px; font-weight: 700; color: var(--accent); margin-bottom: 2px; text-align: center;">{{ item.user.username }}</div>
+                <div class="podium-score" style="font-size: 13px; font-weight: 800; color: var(--primary); margin-bottom: 8px;">{{ item.total_points }} {% if current_lang == 'vi' %}điểm{% else %}pts{% endif %}</div>
+                <div class="podium-pedestal" style="width: 100%; height: 75px; background: linear-gradient(to bottom, rgba(148, 163, 184, 0.15), rgba(148, 163, 184, 0.03)); border: 1.5px solid var(--border); border-bottom: none; border-radius: var(--radius-md) var(--radius-md) 0 0; display: flex; align-items: center; justify-content: center; font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 24px; color: rgba(148, 163, 184, 0.3);">2nd</div>
+            </div>
+        {% endfor %}
+
+        <!-- 1st Place -->
+        {% for item in leaderboard_users|slice:"0:1" %}
+            <div class="podium-column podium-1st" style="display: flex; flex-direction: column; align-items: center; flex: 1.2; min-width: 140px; position: relative;">
+                <!-- Crown -->
+                <div style="position: absolute; top: -34px; font-size: 28px; animation: bounce 2s infinite ease-in-out; z-index: 4;">👑</div>
+                
+                <div class="podium-avatar-wrapper" style="position: relative; width: 94px; height: 94px; margin-bottom: 14px;">
+                    {% if item.user.profile.avatar %}
+                        <img src="{{ item.user.profile.avatar.url }}" alt="{{ item.user.username }}" class="podium-avatar" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 4px solid var(--gold); box-shadow: 0 0 20px rgba(245, 158, 11, 0.3); display: block;">
+                    {% else %}
+                        <div class="podium-avatar" style="width: 100%; height: 100%; border-radius: 50%; background: var(--panel); border: 4px solid var(--gold); display: grid; place-items: center; font-size: 32px; font-weight: 800; color: var(--accent); box-shadow: 0 0 20px rgba(245, 158, 11, 0.3);">
+                            {{ item.user.username|first|upper }}
+                        </div>
+                    {% endif %}
+                    {% if item.user.profile.active_frame %}
+                        <div style="position: absolute; top: -6px; left: -6px; right: -6px; bottom: -6px; border-radius: 50%; pointer-events: none; z-index: 2; {{ item.user.profile.active_frame.css_style }}"></div>
+                    {% endif %}
+                    <div class="podium-rank-badge" style="position: absolute; bottom: -6px; left: 50%; transform: translateX(-50%); width: 26px; height: 26px; border-radius: 50%; background: var(--gold); color: white; display: grid; place-items: center; font-weight: 800; font-size: 12px; box-shadow: var(--shadow-sm); z-index: 3;">1</div>
+                </div>
+                <div class="podium-name" style="font-size: 16px; font-weight: 800; color: var(--accent); margin-bottom: 2px; text-align: center;">{{ item.user.username }}</div>
+                <div class="podium-score" style="font-size: 14px; font-weight: 800; color: var(--emerald); margin-bottom: 8px;">{{ item.total_points }} {% if current_lang == 'vi' %}điểm{% else %}pts{% endif %}</div>
+                <div class="podium-pedestal" style="width: 100%; height: 110px; background: linear-gradient(to bottom, rgba(245, 158, 11, 0.2), rgba(245, 158, 11, 0.04)); border: 1.5px solid rgba(245, 158, 11, 0.3); border-bottom: none; border-radius: var(--radius-md) var(--radius-md) 0 0; display: flex; align-items: center; justify-content: center; font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 32px; color: rgba(245, 158, 11, 0.4); box-shadow: 0 -4px 12px rgba(245, 158, 11, 0.05);">1st</div>
+            </div>
+        {% endfor %}
+
+        <!-- 3rd Place -->
+        {% for item in leaderboard_users|slice:"2:3" %}
+            <div class="podium-column podium-3rd" style="display: flex; flex-direction: column; align-items: center; flex: 1; min-width: 120px;">
+                <div class="podium-avatar-wrapper" style="position: relative; width: 76px; height: 76px; margin-bottom: 14px;">
+                    {% if item.user.profile.avatar %}
+                        <img src="{{ item.user.profile.avatar.url }}" alt="{{ item.user.username }}" class="podium-avatar" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 3px solid var(--bronze); box-shadow: var(--shadow-sm); display: block;">
+                    {% else %}
+                        <div class="podium-avatar" style="width: 100%; height: 100%; border-radius: 50%; background: var(--panel); border: 3px solid var(--bronze); display: grid; place-items: center; font-size: 24px; font-weight: 800; color: var(--accent); box-shadow: var(--shadow-sm);">
+                            {{ item.user.username|first|upper }}
+                        </div>
+                    {% endif %}
+                    {% if item.user.profile.active_frame %}
+                        <div style="position: absolute; top: -5px; left: -5px; right: -5px; bottom: -5px; border-radius: 50%; pointer-events: none; z-index: 2; {{ item.user.profile.active_frame.css_style }}"></div>
+                    {% endif %}
+                    <div class="podium-rank-badge" style="position: absolute; bottom: -6px; left: 50%; transform: translateX(-50%); width: 24px; height: 24px; border-radius: 50%; background: var(--bronze); color: white; display: grid; place-items: center; font-weight: 800; font-size: 11px; box-shadow: var(--shadow-sm); z-index: 3;">3</div>
+                </div>
+                <div class="podium-name" style="font-size: 14px; font-weight: 700; color: var(--accent); margin-bottom: 2px; text-align: center;">{{ item.user.username }}</div>
+                <div class="podium-score" style="font-size: 13px; font-weight: 800; color: var(--primary); margin-bottom: 8px;">{{ item.total_points }} {% if current_lang == 'vi' %}điểm{% else %}pts{% endif %}</div>
+                <div class="podium-pedestal" style="width: 100%; height: 55px; background: linear-gradient(to bottom, rgba(180, 83, 9, 0.15), rgba(180, 83, 9, 0.03)); border: 1.5px solid var(--border); border-bottom: none; border-radius: var(--radius-md) var(--radius-md) 0 0; display: flex; align-items: center; justify-content: center; font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 20px; color: rgba(180, 83, 9, 0.3);">3rd</div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
+<!-- Rankings Table -->
+<div class="card ranking-table-card">
+    <div class="card-header" style="padding: 28px 28px 10px 28px;">
+        <div>
+            <p class="card-label">{% if current_lang == 'vi' %}Bảng xếp hạng{% else %}Rankings{% endif %}</p>
+            <h2>{% if current_lang == 'vi' %}Tất cả người tham gia{% else %}All Competitors{% endif %}</h2>
+        </div>
+    </div>
+
+    <div style="overflow-x: auto;">
+        <table class="ranking-table">
+            <thead>
+                <tr>
+                    <th class="ranking-th" style="width: 80px;">{% if current_lang == 'vi' %}Hạng{% else %}Rank{% endif %}</th>
+                    <th class="ranking-th">{% if current_lang == 'vi' %}Người dùng{% else %}User{% endif %}</th>
+                    <th class="ranking-th">{% if current_lang == 'vi' %}Cấp độ{% else %}Level{% endif %}</th>
+                    <th class="ranking-th" style="text-align: right; width: 120px;">{% if current_lang == 'vi' %}Hành động{% else %}Actions{% endif %}</th>
+                    <th class="ranking-th" style="text-align: right; width: 140px;">{% if current_lang == 'vi' %}Điểm số{% else %}Points{% endif %}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in leaderboard_users %}
+                    <tr class="ranking-tr {% if item.user == user %}highlight{% endif %}">
+                        <td class="ranking-td ranking-td-rank">#{{ item.rank }}</td>
+                        <td class="ranking-td">
+                            <div class="ranking-user-cell">
+                                <div style="position: relative; width: 38px; height: 38px; flex-shrink: 0;">
+                                    {% if item.user.profile.avatar %}
+                                        <img src="{{ item.user.profile.avatar.url }}" alt="{{ item.user.username }}" class="ranking-avatar" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 1px solid var(--border); display: block;">
+                                    {% else %}
+                                        <div class="ranking-avatar" style="width: 100%; height: 100%; border-radius: 50%; background: var(--bg); border: 1px solid var(--border); display: grid; place-items: center; font-weight: 700; font-size: 14px; color: var(--accent); margin: 0;">
+                                            {{ item.user.username|first|upper }}
+                                        </div>
+                                    {% endif %}
+                                    {% if item.user.profile.active_frame %}
+                                        <div style="position: absolute; top: -3px; left: -3px; right: -3px; bottom: -3px; border-radius: 50%; pointer-events: none; z-index: 2; {{ item.user.profile.active_frame.css_style }}"></div>
+                                    {% endif %}
+                                </div>
+                                <div>
+                                    <span class="ranking-user-name">{{ item.user.username }}</span>
+                                    {% if item.user == user %}
+                                        <span class="ranking-level-badge">{% if current_lang == 'vi' %}Bạn{% else %}You{% endif %}</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </td>
+                        <td class="ranking-td">
+                            <span style="font-size: 13px; font-weight: 600;">
+                                {{ item.level_info.icon }} {{ item.level_info.name }}
+                            </span>
+                        </td>
+                        <td class="ranking-td" style="text-align: right; font-weight: 600; color: var(--text-muted);">
+                            {{ item.total_actions }}
+                        </td>
+                        <td class="ranking-td ranking-td-points">{{ item.total_points }} {% if current_lang == 'vi' %}điểm{% else %}pts{% endif %}</td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="5" class="ranking-td">
+                            {% include "components/empty_state.html" with icon="🏅" title="No ranking yet" message="Upload eco actions to appear on the leaderboard." button_url="/upload/" button_text="Upload Action" %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% endblock %}
