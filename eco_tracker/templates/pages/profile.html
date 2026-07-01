@@ -33,7 +33,9 @@
                 {% if user.email %}
                     <p class="muted-text" style="font-size: 13px; color: var(--text-muted); margin-top: 4px;">{{ user.email }}</p>
                 {% else %}
-                    <p class="muted-text" style="font-size: 13px; color: var(--text-muted); font-style: italic; margin-top: 4px;">No email added</p>
+                    <p class="muted-text" style="font-size: 13px; color: var(--text-muted); font-style: italic; margin-top: 4px;">
+                        {% if current_lang == 'vi' %}Chưa thêm email{% else %}No email added{% endif %}
+                    </p>
                 {% endif %}
             </div>
         </div>
@@ -41,12 +43,53 @@
         <!-- Avatar Form -->
         <form method="post" action="{% url 'update_avatar' %}" enctype="multipart/form-data" class="avatar-form">
             {% csrf_token %}
-            <label style="font-size: 13px; font-weight: 700; color: var(--accent); margin-bottom: 4px;">Update Profile Picture</label>
-            <div style="display: flex; gap: 12px; align-items: center;">
-                <input type="file" name="avatar" accept="image/jpeg,image/png,image/webp" style="flex: 1; padding: 8px; font-size: 13px;">
-                <button type="submit" class="secondary-btn" style="padding: 10px 18px; font-size: 13px;">Save Picture</button>
+            <label style="font-size: 13px; font-weight: 700; color: var(--accent); margin-bottom: 4px;">
+                {% if current_lang == 'vi' %}Cập nhật ảnh đại diện{% else %}Update Profile Picture{% endif %}
+            </label>
+            <div style="display: flex; gap: 12px; align-items: center; width: 100%;">
+                <div class="custom-avatar-upload" style="position: relative; flex: 1; height: 38px;">
+                    <!-- Hide native input, click passes through to it because of position: absolute and opacity: 0 -->
+                    <input type="file" name="avatar" id="id_avatar" accept="image/jpeg,image/png,image/webp" style="position: absolute; width: 100%; height: 100%; top: 0; left: 0; opacity: 0; cursor: pointer; z-index: 2;">
+                    
+                    <!-- Styled visual interface -->
+                    <div class="custom-avatar-trigger" style="display: flex; align-items: center; justify-content: space-between; padding: 9px 16px; border: 1.5px dashed var(--primary-glow); border-radius: var(--radius-md); background: var(--panel); height: 100%; cursor: pointer; transition: var(--transition); z-index: 1; box-sizing: border-box;">
+                        <span id="avatarFileName" style="font-size: 13px; font-weight: 700; color: var(--accent); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 180px;">
+                            {% if current_lang == 'vi' %}Chọn ảnh mới...{% else %}Choose new image...{% endif %}
+                        </span>
+                        <span style="font-size: 15px;">🖼️</span>
+                    </div>
+                </div>
+                
+                <button type="submit" class="secondary-btn" style="padding: 0 18px; font-size: 13px; font-weight: 800; border-radius: var(--radius-md); height: 38px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box;">
+                    <span>💾</span> {% if current_lang == 'vi' %}Lưu ảnh{% else %}Save Picture{% endif %}
+                </button>
             </div>
         </form>
+
+        <style>
+            .custom-avatar-upload:hover .custom-avatar-trigger {
+                border-color: var(--primary) !important;
+                background: var(--primary-light) !important;
+                transform: translateY(-1px);
+                box-shadow: var(--shadow-sm);
+            }
+        </style>
+
+        <script>
+            document.addEventListener("DOMContentLoaded", function() {
+                const avatarInput = document.getElementById('id_avatar');
+                if (avatarInput) {
+                    avatarInput.addEventListener('change', function() {
+                        const file = this.files[0];
+                        const nameDisplay = document.getElementById('avatarFileName');
+                        if (file && nameDisplay) {
+                            nameDisplay.textContent = file.name;
+                            nameDisplay.style.color = 'var(--primary)';
+                        }
+                    });
+                }
+            });
+        </script>
 
         <!-- Change Password Link -->
         <div style="margin-top: 20px; border-top: 1.5px solid var(--border); padding-top: 20px; display: flex; gap: 12px;">
@@ -69,7 +112,7 @@
 
             <div class="profile-info-box">
                 <p>{{ t.total_eco_score }}</p>
-                <strong>{{ total_points }} pts</strong>
+                <strong>{{ total_points }} {% if current_lang == 'vi' %}điểm{% else %}pts{% endif %}</strong>
             </div>
 
             <div class="profile-info-box">
@@ -94,11 +137,19 @@
 
         {% if level_info.next_level %}
             <strong class="next-level-text" style="font-size: 13px; font-weight: 700; color: var(--primary);">
-                🌱 {{ level_info.points_to_next }} pts left to reach {{ level_info.next_level }}
+                {% if current_lang == 'vi' %}
+                    🌱 Còn thiếu {{ level_info.points_to_next }} điểm để đạt cấp độ {{ level_info.next_level }}
+                {% else %}
+                    🌱 {{ level_info.points_to_next }} pts left to reach {{ level_info.next_level }}
+                {% endif %}
             </strong>
         {% else %}
             <strong class="next-level-text" style="font-size: 13px; font-weight: 700; color: var(--emerald);">
-                🏆 Highest level reached! You are an Earth Guardian.
+                {% if current_lang == 'vi' %}
+                    🏆 Đã đạt cấp độ cao nhất! Bạn là Người Bảo Vệ Trái Đất.
+                {% else %}
+                    🏆 Highest level reached! You are an Earth Guardian.
+                {% endif %}
             </strong>
         {% endif %}
     </div>
@@ -140,9 +191,13 @@
                 <p style="font-size: 10px; color: var(--text-muted); line-height: 1.3; margin: 0; min-height: 26px;">{{ item.badge.description }}</p>
                 
                 {% if item.is_earned %}
-                    <small style="font-size: 9px; font-weight: 800; color: var(--emerald); text-transform: uppercase; margin-top: 4px;">Earned</small>
+                    <small style="font-size: 9px; font-weight: 800; color: var(--emerald); text-transform: uppercase; margin-top: 4px;">
+                        {% if current_lang == 'vi' %}Đã đạt{% else %}Earned{% endif %}
+                    </small>
                 {% else %}
-                    <small style="font-size: 9px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-top: 4px;">Locked</small>
+                    <small style="font-size: 9px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-top: 4px;">
+                        {% if current_lang == 'vi' %}Chưa đạt{% else %}Locked{% endif %}
+                    </small>
                 {% endif %}
             </div>
         {% endfor %}
@@ -182,7 +237,9 @@
                     <span style="font-weight: 700; color: var(--text-muted);">{{ item.count }} ({{ item.percent }}%)</span>
                 </div>
             {% empty %}
-                <p style="font-size: 13px; color: var(--text-muted); font-style: italic; text-align: center;">No activity statistics yet.</p>
+                <p style="font-size: 13px; color: var(--text-muted); font-style: italic; text-align: center;">
+                    {% if current_lang == 'vi' %}Chưa có thống kê hoạt động.{% else %}No activity statistics yet.{% endif %}
+                </p>
             {% endfor %}
         </div>
     </div>
@@ -193,13 +250,17 @@
             <div class="card">
                 <p class="card-label">{{ t.most_common_category }}</p>
                 <h2 style="font-size: 20px; font-weight: 800; color: var(--accent); margin: 6px 0 2px;">{{ most_common_category }}</h2>
-                <p class="muted-text" style="font-size: 13px; color: var(--text-muted);">{{ most_common_category_count }} actions uploaded</p>
+                <p class="muted-text" style="font-size: 13px; color: var(--text-muted);">
+                    {% if current_lang == 'vi' %}Đã tải lên {{ most_common_category_count }} hành động{% else %}{{ most_common_category_count }} actions uploaded{% endif %}
+                </p>
             </div>
 
             <div class="card">
                 <p class="card-label">{{ t.eco_identity }}</p>
                 <h2 style="font-size: 20px; font-weight: 800; color: var(--primary); margin: 6px 0 2px;">{{ impact_level }}</h2>
-                <p class="muted-text" style="font-size: 13px; color: var(--text-muted);">Your current environmental level.</p>
+                <p class="muted-text" style="font-size: 13px; color: var(--text-muted);">
+                    {% if current_lang == 'vi' %}Cấp độ bảo vệ môi trường hiện tại của bạn.{% else %}Your current environmental level.{% endif %}
+                </p>
             </div>
         </div>
 
@@ -207,10 +268,16 @@
             <p class="card-label">{{ t.next_goal }}</p>
             {% if level_info.next_level %}
                 <h2 style="font-size: 22px; font-weight: 800; color: var(--accent); margin: 6px 0 4px;">{{ level_info.next_level }}</h2>
-                <p class="muted-text" style="font-size: 13px; color: var(--text-muted);">Keep uploading actions to unlock new badges and reach your next level!</p>
+                <p class="muted-text" style="font-size: 13px; color: var(--text-muted);">
+                    {% if current_lang == 'vi' %}Tiếp tục tải lên các hành động để mở khóa danh hiệu mới và lên cấp tiếp theo!{% else %}Keep uploading actions to unlock new badges and reach your next level!{% endif %}
+                </p>
             {% else %}
-                <h2 style="font-size: 22px; font-weight: 800; color: var(--emerald); margin: 6px 0 4px;">Max Level</h2>
-                <p class="muted-text" style="font-size: 13px; color: var(--text-muted);">Congratulations! You have completed the full level roadmap.</p>
+                <h2 style="font-size: 22px; font-weight: 800; color: var(--emerald); margin: 6px 0 4px;">
+                    {% if current_lang == 'vi' %}Cấp tối đa{% else %}Max Level{% endif %}
+                </h2>
+                <p class="muted-text" style="font-size: 13px; color: var(--text-muted);">
+                    {% if current_lang == 'vi' %}Chúc mừng! Bạn đã hoàn thành toàn bộ lộ trình cấp độ.{% else %}Congratulations! You have completed the full level roadmap.{% endif %}
+                </p>
             {% endif %}
         </div>
     </div>
@@ -224,7 +291,9 @@
             <h2>{{ t.your_latest_eco_actions }}</h2>
         </div>
         <a href="{% url 'my_progress' %}">
-            <button class="secondary-btn" style="padding: 8px 16px; font-size: 13px;">View all</button>
+            <button class="secondary-btn" style="padding: 8px 16px; font-size: 13px;">
+                {% if current_lang == 'vi' %}Xem tất cả{% else %}View all{% endif %}
+            </button>
         </a>
     </div>
 
@@ -240,12 +309,14 @@
                 <div class="profile-action-info">
                     <h4>{{ action.get_category_display }}</h4>
                     <p>{{ action.caption }}</p>
-                    <strong>+{{ action.points }} pts</strong>
+                    <strong>+{{ action.points }} {% if current_lang == 'vi' %}điểm{% else %}pts{% endif %}</strong>
                 </div>
             </div>
         {% empty %}
             <div style="grid-column: 1 / -1; width: 100%;">
-                <p class="muted-text" style="text-align: center; font-style: italic; padding: 20px;">No recent actions yet.</p>
+                <p class="muted-text" style="text-align: center; font-style: italic; padding: 20px;">
+                    {% if current_lang == 'vi' %}Chưa có hành động gần đây.{% else %}No recent actions yet.{% endif %}
+                </p>
             </div>
         {% endfor %}
     </div>
