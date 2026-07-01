@@ -1,3 +1,16 @@
+# How to deploy your project at your local and AWS
+- pull code to Nginx folder web
+- cd folder code
+- python -m venv venv
+- source venv/bin/activate
+- pip install django
+- pip install Pillow
+- pip install celery
+- python manage.py migrate
+- python manage.py runserver
+
+Enjoy the code
+
 # Eco Tracker - Nền tảng Mạng xã hội Gamification vì Môi trường
 
 Eco Tracker là một ứng dụng web mạng xã hội thân thiện với môi trường, được thiết kế theo mô hình **gamification (trò chơi hóa)** nhằm khuyến khích người dùng xây dựng lối sống xanh bền vững. Hệ thống được phát triển hoàn toàn bằng **Python 3.13+** và **Django 5+**, sử dụng kiến trúc Django Templates truyền thống cùng hệ thống thiết kế CSS thuần (Vanilla CSS) cao cấp, hỗ trợ hoàn toàn giao diện Sáng/Tối (Light/Dark Mode).
