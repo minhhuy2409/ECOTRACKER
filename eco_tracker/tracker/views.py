@@ -387,7 +387,7 @@ def upload_action(request):
                 msg = "Activity uploaded successfully! AI is analyzing your image in the background. Your points and progress will update automatically in a few moments."
             
             messages.info(request, msg)
-            return redirect("dashboard")
+            return redirect("upload_success")
         else:
             messages.error(
                 request,
@@ -403,6 +403,16 @@ def upload_action(request):
     }
 
     return render(request, "pages/upload_action.html", context)
+
+
+@login_required
+def upload_success(request):
+    active_lang = request.session.get("language", "en")
+    context = {
+        "page_title": "Upload Successful" if active_lang != "vi" else "Tải lên thành công",
+        "current_lang": active_lang,
+    }
+    return render(request, "pages/upload_success.html", context)
 
 
 @login_required
