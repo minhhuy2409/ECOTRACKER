@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div style="display: flex; justify-content: center; align-items: center; min-height: 60vh; padding: 20px;">
+    <div class="card" style="max-width: 500px; width: 100%; text-align: center; padding: 40px 28px; box-shadow: var(--shadow-lg); border-radius: var(--radius-lg); border: 1.5px solid var(--primary-glow); background: var(--panel);">
+        <div style="font-size: 64px; margin-bottom: 24px; animation: pop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);">🎉</div>
+        
+        <h2 style="font-size: 24px; font-weight: 800; color: var(--accent); margin-bottom: 12px;">
+            {% if current_lang == 'vi' %}Tải lên thành công!{% else %}Upload Successful!{% endif %}
+        </h2>
+        
+        <p class="muted-text" style="font-size: 14.5px; line-height: 1.6; color: var(--text-muted); margin-bottom: 32px;">
+            {% if current_lang == 'vi' %}
+                Hoạt động sống xanh của bạn đã được ghi nhận. Hệ thống Google Gemini AI đang tiến hành phân tích hình ảnh dưới nền. Điểm số và tiến trình nhiệm vụ của bạn sẽ được cập nhật tự động sau vài phút.
+            {% else %}
+                Your green action has been recorded. Google Gemini AI is analyzing your image in the background. Your points and mission progress will be updated automatically in a few moments.
+            {% endif %}
+        </p>
+        
+        <div style="display: flex; flex-direction: column; gap: 12px; width: 100%;">
+            <a href="{% url 'upload_action' %}" style="text-decoration: none; width: 100%;">
+                <button class="upload-btn" style="width: 100%; justify-content: center; padding: 12px; font-size: 15px; font-weight: 800; border-radius: var(--radius-md); display: inline-flex; align-items: center; gap: 8px; border: none; cursor: pointer;">
+                    <span>➕</span> {% if current_lang == 'vi' %}Tiếp tục chia sẻ{% else %}Continue Sharing{% endif %}
+                </button>
+            </a>
+            
+            <a href="{% url 'dashboard' %}" style="text-decoration: none; width: 100%;">
+                <button class="secondary-btn" style="width: 100%; justify-content: center; padding: 12px; font-size: 15px; font-weight: 800; border-radius: var(--radius-md); border: 1.5px solid var(--border); background: var(--bg); display: inline-flex; align-items: center; gap: 8px; cursor: pointer;">
+                    <span>🏠</span> {% if current_lang == 'vi' %}Quay về Trang chủ{% else %}Go to Homepage{% endif %}
+                </button>
+            </a>
+        </div>
+    </div>
+</div>
+
+<style>
+    @keyframes pop {
+        0% { transform: scale(0.5); opacity: 0; }
+        100% { transform: scale(1); opacity: 1; }
+    }
+</style>
+{% endblock %}

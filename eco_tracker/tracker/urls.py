@@ -5,6 +5,7 @@ from . import views
 urlpatterns = [
     path("", views.dashboard, name="dashboard"),
     path("upload/", views.upload_action, name="upload_action"),
+    path("upload/success/", views.upload_success, name="upload_success"),
     path("ai/classify-action/", views.ai_classify_action, name="ai_classify_action"),
     path("feed/", views.eco_feed, name="eco_feed"),
     path("missions/", views.missions, name="missions"),
