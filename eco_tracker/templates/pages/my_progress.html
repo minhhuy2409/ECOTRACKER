@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load translation_tags %}
 
 {% block content %}
 
@@ -91,12 +92,12 @@
                 {% elif action.ai_status == 'rejected' %}
                     <h4 style="color: #dc3545;">❌ {% if current_lang == 'vi' %}Không hợp lệ{% else %}Invalid{% endif %}</h4>
                 {% else %}
-                    <h4>{{ action.get_category_display }}</h4>
+                    <h4>{{ t|translate_key:action.get_category_display }}</h4>
                 {% endif %}
                 <p>{{ action.caption }}</p>
 
                 <div class="gallery-actions" style="width: 100%;">
-                    <button class="small-btn" style="width: 100%; justify-content: center; font-weight: 800; border: none; cursor: pointer; padding: 10px;" onclick="openActionDetails('{% if action.image %}{{ action.image.url }}{% endif %}', '{{ action.get_category_display }}', '{{ action.caption|escapejs }}', '{{ action.points }}', '{{ action.created_at|date:"d M Y, H:i" }}', '{{ action.ai_status }}', '{{ action.ai_reason|escapejs }}')">{% if current_lang == 'vi' %}Xem chi tiết{% else %}View Details{% endif %}</button>
+                    <button class="small-btn" style="width: 100%; justify-content: center; font-weight: 800; border: none; cursor: pointer; padding: 10px;" onclick="openActionDetails('{% if action.image %}{{ action.image.url }}{% endif %}', '{{ t|translate_key:action.get_category_display }}', '{{ action.caption|escapejs }}', '{{ action.points }}', '{{ action.created_at|date:"d M Y, H:i" }}', '{{ action.ai_status }}', '{{ action.ai_reason|escapejs }}')">{% if current_lang == 'vi' %}Xem chi tiết{% else %}View Details{% endif %}</button>
                 </div>
             </div>
         </div>
@@ -465,8 +466,9 @@ function openActionDetails(imgUrl, category, caption, points, date, aiStatus, ai
         placeholder.style.display = "grid";
     }
     
-    document.getElementById("actionModalPoints").textContent = aiStatus === 'pending' ? '⏱️ AI' : (aiStatus === 'rejected' ? '❌ AI' : `+${points} pts`);
-    document.getElementById("actionModalCategory").textContent = aiStatus === 'pending' ? 'Pending' : (aiStatus === 'rejected' ? 'Rejected' : category);
+    const activeLang = "{{ current_lang }}";
+    document.getElementById("actionModalPoints").textContent = aiStatus === 'pending' ? '⏱️ AI' : (aiStatus === 'rejected' ? '❌ AI' : `+${points} ` + (activeLang === 'vi' ? 'điểm' : 'pts'));
+    document.getElementById("actionModalCategory").textContent = aiStatus === 'pending' ? (activeLang === 'vi' ? 'Đang chờ' : 'Pending') : (aiStatus === 'rejected' ? (activeLang === 'vi' ? 'Bị từ chối' : 'Rejected') : category);
     document.getElementById("actionModalDate").textContent = date;
     document.getElementById("actionModalCaption").textContent = caption;
     

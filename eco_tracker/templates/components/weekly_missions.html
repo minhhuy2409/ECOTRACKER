@@ -1,3 +1,4 @@
+{% load translation_tags %}
 <div class="card weekly-missions-card" style="margin-top: 24px;">
     <div class="card-header">
         <div>
@@ -31,9 +32,9 @@
                             {% elif user_mission.mission.category == 'saving_energy' %}⚡
                             {% elif user_mission.mission.category == 'reusable_item' %}🥤
                             {% endif %}
-                            {{ user_mission.mission.title }}
+                            {{ t|translate_key:user_mission.mission.title }}
                         </h4>
-                        <p style="margin: 0 0 8px 0; font-size: 12px; color: var(--text-muted); line-height: 1.4;">{{ user_mission.mission.description }}</p>
+                        <p style="margin: 0 0 8px 0; font-size: 12px; color: var(--text-muted); line-height: 1.4;">{{ t|translate_key:user_mission.mission.description }}</p>
                         
                         {% if not user_mission.is_completed %}
                             <!-- Progress bar for weekly multi-step mission -->
@@ -52,7 +53,7 @@
                 </strong>
             </div>
         {% empty %}
-            {% include "components/empty_state.html" with icon="🎯" title="No weekly missions" message="Weekly missions will appear here." %}
+            {% include "components/empty_state.html" with icon="🎯" title=t.no_weekly_missions|default:"No weekly missions" message=t.no_weekly_missions_message|default:"Weekly missions will appear here." %}
         {% endfor %}
     </div>
 </div>

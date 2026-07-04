@@ -1,11 +1,11 @@
 {% load static %}
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ current_lang|default:'en' }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register - EcoTracker</title>
+    <title>{% if current_lang == 'vi' %}Đăng ký{% else %}Register{% endif %} - EcoTracker</title>
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
 <body class="login-page">
@@ -22,8 +22,8 @@
 
 <div class="login-card">
     <div class="login-header">
-        <h1>🌱 Create Account</h1>
-        <p>Join EcoTracker and start earning eco points</p>
+        <h1>🌱 {% if current_lang == 'vi' %}Tạo tài khoản{% else %}Create Account{% endif %}</h1>
+        <p>{% if current_lang == 'vi' %}Tham gia EcoTracker và bắt đầu tích lũy điểm thưởng sống xanh{% else %}Join EcoTracker and start earning eco points{% endif %}</p>
     </div>
 
     {% if messages %}
@@ -40,7 +40,7 @@
         {% csrf_token %}
         <div class="form-fields-wrapper">
             <p>
-                {{ form.username.label_tag }}
+                <label for="id_username">{% if current_lang == 'vi' %}Tên đăng nhập{% else %}Username{% endif %}:</label>
                 {{ form.username }}
                 {% if form.username.errors %}
                     {{ form.username.errors }}
@@ -48,7 +48,7 @@
             </p>
 
             <p>
-                {{ form.email.label_tag }}
+                <label for="id_email">{% if current_lang == 'vi' %}Địa chỉ Email{% else %}Email address{% endif %}:</label>
                 {{ form.email }}
                 {% if form.email.errors %}
                     {{ form.email.errors }}
@@ -56,11 +56,11 @@
             </p>
 
             <p class="password-field">
-                {{ form.password1.label_tag }}
+                <label for="id_password1">{% if current_lang == 'vi' %}Mật khẩu{% else %}Password{% endif %}:</label>
                 <div class="password-wrapper">
                     {{ form.password1 }}
                     <button type="button" class="toggle-password" onclick="togglePassword('id_password1', this)">
-                        Show
+                        {% if current_lang == 'vi' %}Hiện{% else %}Show{% endif %}
                     </button>
                 </div>
                 {% if form.password1.errors %}
@@ -69,11 +69,11 @@
             </p>
 
             <p class="password-field">
-                {{ form.password2.label_tag }}
+                <label for="id_password2">{% if current_lang == 'vi' %}Xác nhận mật khẩu{% else %}Confirm password{% endif %}:</label>
                 <div class="password-wrapper">
                     {{ form.password2 }}
                     <button type="button" class="toggle-password" onclick="togglePassword('id_password2', this)">
-                        Show
+                        {% if current_lang == 'vi' %}Hiện{% else %}Show{% endif %}
                     </button>
                 </div>
                 {% if form.password2.errors %}
@@ -82,24 +82,25 @@
             </p>
         </div>
 
-        <button type="submit" class="upload-btn auth-submit-btn">Register</button>
+        <button type="submit" class="upload-btn auth-submit-btn">{% if current_lang == 'vi' %}Đăng ký{% else %}Register{% endif %}</button>
     </form>
 
     <p class="auth-link">
-        Already have an account?
-        <a href="{% url 'login' %}">Login here</a>
+        {% if current_lang == 'vi' %}Đã có tài khoản?{% else %}Already have an account?{% endif %}
+        <a href="{% url 'login' %}">{% if current_lang == 'vi' %}Đăng nhập tại đây{% else %}Login here{% endif %}</a>
     </p>
 </div>
 
 <script>
+    const activeLang = "{{ current_lang }}";
     function togglePassword(inputId, button) {
         const input = document.getElementById(inputId);
         if (input.type === "password") {
             input.type = "text";
-            button.textContent = "Hide";
+            button.textContent = activeLang === "vi" ? "Ẩn" : "Hide";
         } else {
             input.type = "password";
-            button.textContent = "Show";
+            button.textContent = activeLang === "vi" ? "Hiện" : "Show";
         }
     }
 </script>

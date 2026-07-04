@@ -1,11 +1,11 @@
 <div class="card recent-card">
     <div class="card-header">
         <div>
-            <p class="card-label">Recent Eco Actions</p>
-            <h2>Latest uploads</h2>
+            <p class="card-label">{% if current_lang == 'vi' %}Hành động Eco gần đây{% else %}Recent Eco Actions{% endif %}</p>
+            <h2>{% if current_lang == 'vi' %}Tải lên mới nhất{% else %}Latest uploads{% endif %}</h2>
         </div>
 
-        <a href="{% url 'my_progress' %}">View all</a>
+        <a href="{% url 'my_progress' %}">{% if current_lang == 'vi' %}Xem tất cả{% else %}View all{% endif %}</a>
     </div>
 
     <div class="action-list">
@@ -19,16 +19,17 @@
                 {% endif %}
             </a>
 
+{% load translation_tags %}
             <div class="action-content">
-                <h4>{{ action.get_category_display }}</h4>
+                <h4>{{ t|translate_key:action.get_category_display }}</h4>
                 <p>{{ action.caption }}</p>
                 <small>{{ action.created_at|date:"d M Y, H:i" }}</small>
             </div>
 
-            <strong>+{{ action.points }} pts</strong>
+            <strong>+{{ action.points }} {% if current_lang == 'vi' %}điểm{% else %}pts{% endif %}</strong>
         </div>
         {% empty %}
-        {% include "components/empty_state.html" with icon="📸" title="No recent actions" message="Upload your first eco action to start earning points." button_url="/upload/" button_text="Upload Action" %}
+        {% include "components/empty_state.html" with icon="📸" title=t.no_recent_actions|default:"No recent actions" message=t.no_recent_actions_message|default:"Upload your first eco action to start earning points." button_url="/upload/" button_text=t.share_action|default:"Upload Action" %}
         {% endfor %}
     </div>
 </div>

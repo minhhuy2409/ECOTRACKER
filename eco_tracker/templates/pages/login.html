@@ -1,11 +1,11 @@
 {% load static %}
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ current_lang|default:'en' }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - EcoTracker</title>
+    <title>{% if current_lang == 'vi' %}Đăng nhập{% else %}Login{% endif %} - EcoTracker</title>
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
 <body class="login-page">
@@ -23,7 +23,7 @@
 <div class="login-card">
     <div class="login-header">
         <h1>🌱 EcoTracker</h1>
-        <p>Login to continue your eco journey</p>
+        <p>{% if current_lang == 'vi' %}Đăng nhập để tiếp tục hành trình sống xanh của bạn{% else %}Login to continue your eco journey{% endif %}</p>
     </div>
 
     {% if messages %}
@@ -39,15 +39,28 @@
     <form method="post" class="eco-form">
         {% csrf_token %}
         <div class="form-fields-wrapper">
-            {{ form.as_p }}
+            {% for field in form %}
+                <div class="form-group" style="margin-bottom: 16px;">
+                    <label style="display: block; margin-bottom: 6px; font-weight: 700; color: var(--accent);">
+                        {% if current_lang == 'vi' %}
+                            {% if field.label == 'Username' %}Tên đăng nhập
+                            {% elif field.label == 'Password' %}Mật khẩu
+                            {% else %}{{ field.label }}{% endif %}
+                        {% else %}
+                            {{ field.label }}
+                        {% endif %}
+                    </label>
+                    {{ field }}
+                </div>
+            {% endfor %}
         </div>
 
-        <button type="submit" class="upload-btn auth-submit-btn">Login</button>
+        <button type="submit" class="upload-btn auth-submit-btn">{% if current_lang == 'vi' %}Đăng nhập{% else %}Login{% endif %}</button>
     </form>
 
     <p class="auth-link">
-        Don't have an account?
-        <a href="{% url 'register' %}">Register here</a>
+        {% if current_lang == 'vi' %}Chưa có tài khoản?{% else %}Don't have an account?{% endif %}
+        <a href="{% url 'register' %}">{% if current_lang == 'vi' %}Đăng ký tại đây{% else %}Register here{% endif %}</a>
     </p>
 </div>
 

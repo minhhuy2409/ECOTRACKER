@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load translation_tags %}
 
 {% block content %}
 
@@ -102,8 +103,8 @@
                             </div>
 
                             <div class="mission-content" style="flex: 1;">
-                                <h4 style="margin: 0 0 4px 0; font-size: 14px; font-weight: 700; color: {% if user_mission.is_completed %}var(--text-muted){% else %}var(--text){% endif %}; text-decoration: {% if user_mission.is_completed %}line-through{% else %}none{% endif %};">{{ user_mission.mission.title }}</h4>
-                                <p style="margin: 0; font-size: 12px; color: var(--text-muted); line-height: 1.4;">{{ user_mission.mission.description }}</p>
+                                <h4 style="margin: 0 0 4px 0; font-size: 14px; font-weight: 700; color: {% if user_mission.is_completed %}var(--text-muted){% else %}var(--text){% endif %}; text-decoration: {% if user_mission.is_completed %}line-through{% else %}none{% endif %};">{{ t|translate_key:user_mission.mission.title }}</h4>
+                                <p style="margin: 0; font-size: 12px; color: var(--text-muted); line-height: 1.4;">{{ t|translate_key:user_mission.mission.description }}</p>
                             </div>
                         </div>
 
@@ -112,7 +113,7 @@
                         </strong>
                     </div>
                 {% empty %}
-                    {% include "components/empty_state.html" with icon="🎯" title="No daily missions" message="Daily missions will appear here." %}
+                    {% include "components/empty_state.html" with icon="🎯" title=t.no_daily_missions|default:"No daily missions" message=t.no_daily_missions_message|default:"Daily missions will appear here." %}
                 {% endfor %}
             </div>
         </div>
@@ -143,8 +144,8 @@
                             </div>
 
                             <div class="mission-content" style="flex: 1;">
-                                <h4 style="margin: 0 0 4px 0; font-size: 14px; font-weight: 700; color: {% if user_mission.is_completed %}var(--text-muted){% else %}var(--text){% endif %}; text-decoration: {% if user_mission.is_completed %}line-through{% else %}none{% endif %};">{{ user_mission.mission.title }}</h4>
-                                <p style="margin: 0 0 8px 0; font-size: 12px; color: var(--text-muted); line-height: 1.4;">{{ user_mission.mission.description }}</p>
+                                <h4 style="margin: 0 0 4px 0; font-size: 14px; font-weight: 700; color: {% if user_mission.is_completed %}var(--text-muted){% else %}var(--text){% endif %}; text-decoration: {% if user_mission.is_completed %}line-through{% else %}none{% endif %};">{{ t|translate_key:user_mission.mission.title }}</h4>
+                                <p style="margin: 0 0 8px 0; font-size: 12px; color: var(--text-muted); line-height: 1.4;">{{ t|translate_key:user_mission.mission.description }}</p>
                                 
                                 {% if not user_mission.is_completed %}
                                     <div style="display: flex; align-items: center; gap: 8px; font-size: 11px; font-weight: 700; color: var(--text-muted);">
@@ -162,7 +163,7 @@
                         </strong>
                     </div>
                 {% empty %}
-                    {% include "components/empty_state.html" with icon="🎯" title="No weekly missions" message="Weekly missions will appear here." %}
+                    {% include "components/empty_state.html" with icon="🎯" title=t.no_weekly_missions|default:"No weekly missions" message=t.no_weekly_missions_message|default:"Weekly missions will appear here." %}
                 {% endfor %}
             </div>
         </div>

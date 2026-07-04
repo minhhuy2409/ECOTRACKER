@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load translation_tags %}
 
 {% block content %}
 
@@ -153,7 +154,7 @@
                         </td>
                         <td class="ranking-td">
                             <span style="font-size: 13px; font-weight: 600;">
-                                {{ item.level_info.icon }} {{ item.level_info.name }}
+                                {{ item.level_info.icon }} {{ t|translate_key:item.level_info.name }}
                             </span>
                         </td>
                         <td class="ranking-td" style="text-align: right; font-weight: 600; color: var(--text-muted);">
@@ -164,7 +165,7 @@
                 {% empty %}
                     <tr>
                         <td colspan="5" class="ranking-td">
-                            {% include "components/empty_state.html" with icon="🏅" title="No ranking yet" message="Upload eco actions to appear on the leaderboard." button_url="/upload/" button_text="Upload Action" %}
+                            {% include "components/empty_state.html" with icon="🏅" title=t.no_ranking_yet|default:"No ranking yet" message=t.no_ranking_yet_message|default:"Upload eco actions to appear on the leaderboard." button_url="/upload/" button_text=t.share_action|default:"Upload Action" %}
                         </td>
                     </tr>
                 {% endfor %}

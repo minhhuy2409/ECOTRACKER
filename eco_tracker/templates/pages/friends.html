@@ -60,7 +60,7 @@
                     </div>
                 </div>
             {% empty %}
-                {% include "components/empty_state.html" with icon="📩" title="No friend requests" message="When someone sends you a friend request, it will appear here." %}
+                {% include "components/empty_state.html" with icon="📩" title=t.no_friend_requests|default:"No friend requests" message=t.no_friend_requests_message|default:"When someone sends you a friend request, it will appear here." %}
             {% endfor %}
         </div>
     </div>
@@ -97,7 +97,7 @@
                     </div>
                 </div>
             {% empty %}
-                {% include "components/empty_state.html" with icon="⏳" title="No pending requests" message="Requests you send will appear here while waiting for a response." %}
+                {% include "components/empty_state.html" with icon="⏳" title=t.no_pending_requests|default:"No pending requests" message=t.no_pending_requests_message|default:"Requests you send will appear here while waiting for a response." %}
             {% endfor %}
         </div>
     </div>
@@ -170,7 +170,7 @@
             </div>
         {% empty %}
             <div style="grid-column: 1 / -1; width: 100%;">
-                {% include "components/empty_state.html" with icon="👥" title="No friends yet" message="Add friends by username to compare eco progress." %}
+                {% include "components/empty_state.html" with icon="👥" title=t.no_friends_yet|default:"No friends yet" message=t.no_friends_yet_message|default:"Add friends by username to compare eco progress." %}
             </div>
         {% endfor %}
     </div>

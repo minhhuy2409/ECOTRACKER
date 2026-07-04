@@ -65,7 +65,7 @@
                 </div>
             </div>
         {% empty %}
-            {% include "components/empty_state.html" with icon="📨" title="No group invites" message="Group invitations from other users will appear here." %}
+            {% include "components/empty_state.html" with icon="📨" title=t.no_group_invites|default:"No group invites" message=t.no_group_invites_message|default:"Group invitations from other users will appear here." %}
         {% endfor %}
     </div>
 </div>
@@ -111,7 +111,7 @@
             </div>
         {% empty %}
             <div style="grid-column: 1 / -1; width: 100%;">
-                {% include "components/empty_state.html" with icon="🏆" title="No groups yet" message="Create a group challenge or accept an invite to compete with friends." %}
+                {% include "components/empty_state.html" with icon="🏆" title=t.no_groups_yet|default:"No groups yet" message=t.no_groups_message|default:"Create a group challenge or accept an invite to compete with friends." %}
             </div>
         {% endfor %}
     </div>

@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load translation_tags %}
 
 {% block content %}
 
@@ -71,7 +72,7 @@
                             </span>
                         {% else %}
                             <span class="level-badge" style="font-size: 11px; padding: 3px 8px; text-transform: uppercase;">
-                                {{ action.get_category_display }}
+                                {{ t|translate_key:action.get_category_display }}
                             </span>
                         {% endif %}
                     </div>

@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load translation_tags %}
 
 {% block content %}
 
@@ -107,7 +108,7 @@
 
             <div class="profile-info-box">
                 <p>{{ t.current_level }}</p>
-                <strong>{{ level_info.icon }} {{ level_info.name }}</strong>
+                <strong>{{ level_info.icon }} {{ t|translate_key:level_info.name }}</strong>
             </div>
 
             <div class="profile-info-box">
@@ -132,15 +133,15 @@
                 <div class="progress-bar-fill" style="width: {{ progress_percent|default:0 }}%;"></div>
             </div>
 
-            <p class="muted-text" style="font-size: 14px; line-height: 1.5; color: var(--text-muted); margin-bottom: 16px;">{{ level_info.description }}</p>
+            <p class="muted-text" style="font-size: 14px; line-height: 1.5; color: var(--text-muted); margin-bottom: 16px;">{{ t|translate_key:level_info.description }}</p>
         </div>
 
         {% if level_info.next_level %}
             <strong class="next-level-text" style="font-size: 13px; font-weight: 700; color: var(--primary);">
                 {% if current_lang == 'vi' %}
-                    🌱 Còn thiếu {{ level_info.points_to_next }} điểm để đạt cấp độ {{ level_info.next_level }}
+                    🌱 Còn thiếu {{ level_info.points_to_next }} điểm để đạt cấp độ {{ t|translate_key:level_info.next_level }}
                 {% else %}
-                    🌱 {{ level_info.points_to_next }} pts left to reach {{ level_info.next_level }}
+                    🌱 {{ level_info.points_to_next }} pts left to reach {{ t|translate_key:level_info.next_level }}
                 {% endif %}
             </strong>
         {% else %}
@@ -187,8 +188,8 @@
                 <div class="badge-icon" style="font-size: 38px; line-height: 1; filter: {% if item.is_earned %}none{% else %}grayscale(100%){% endif %}; transition: var(--transition);">
                     {{ item.badge.icon }}
                 </div>
-                <h4 style="font-size: 13px; font-weight: 800; color: var(--accent);">{{ item.badge.name }}</h4>
-                <p style="font-size: 10px; color: var(--text-muted); line-height: 1.3; margin: 0; min-height: 26px;">{{ item.badge.description }}</p>
+                <h4 style="font-size: 13px; font-weight: 800; color: var(--accent);">{{ t|translate_key:item.badge.name }}</h4>
+                <p style="font-size: 10px; color: var(--text-muted); line-height: 1.3; margin: 0; min-height: 26px;">{{ t|translate_key:item.badge.description }}</p>
                 
                 {% if item.is_earned %}
                     <small style="font-size: 9px; font-weight: 800; color: var(--emerald); text-transform: uppercase; margin-top: 4px;">
@@ -257,7 +258,7 @@
 
             <div class="card">
                 <p class="card-label">{{ t.eco_identity }}</p>
-                <h2 style="font-size: 20px; font-weight: 800; color: var(--primary); margin: 6px 0 2px;">{{ impact_level }}</h2>
+                <h2 style="font-size: 20px; font-weight: 800; color: var(--primary); margin: 6px 0 2px;">{{ t|translate_key:impact_level }}</h2>
                 <p class="muted-text" style="font-size: 13px; color: var(--text-muted);">
                     {% if current_lang == 'vi' %}Cấp độ bảo vệ môi trường hiện tại của bạn.{% else %}Your current environmental level.{% endif %}
                 </p>
@@ -267,7 +268,7 @@
         <div class="card" style="flex: 1; display: flex; flex-direction: column; justify-content: center;">
             <p class="card-label">{{ t.next_goal }}</p>
             {% if level_info.next_level %}
-                <h2 style="font-size: 22px; font-weight: 800; color: var(--accent); margin: 6px 0 4px;">{{ level_info.next_level }}</h2>
+                <h2 style="font-size: 22px; font-weight: 800; color: var(--accent); margin: 6px 0 4px;">{{ t|translate_key:level_info.next_level }}</h2>
                 <p class="muted-text" style="font-size: 13px; color: var(--text-muted);">
                     {% if current_lang == 'vi' %}Tiếp tục tải lên các hành động để mở khóa danh hiệu mới và lên cấp tiếp theo!{% else %}Keep uploading actions to unlock new badges and reach your next level!{% endif %}
                 </p>
