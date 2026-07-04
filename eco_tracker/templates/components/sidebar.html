@@ -3,12 +3,12 @@
         <div class="brand-logo">🌱</div>
         <div>
             <h2>{{ t.eco_tracker }}</h2>
-            <p>Green Action App</p>
+            <p>{% if current_lang == 'vi' %}Ứng dụng Sống Xanh{% else %}Green Action App{% endif %}</p>
         </div>
     </div>
 
     <nav class="sidebar-menu">
-        <p class="sidebar-section-title" style="margin-top: 8px;">Core</p>
+        <p class="sidebar-section-title" style="margin-top: 8px;">{% if current_lang == 'vi' %}Cốt lõi{% else %}Core{% endif %}</p>
         <a class="{% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}" href="{% url 'dashboard' %}">
             <span>📊</span> {{ t.dashboard }}
         </a>
@@ -21,7 +21,7 @@
             <span>👤</span> {{ t.profile }}
         </a>
 
-        <p class="sidebar-section-title">Community</p>
+        <p class="sidebar-section-title">{% if current_lang == 'vi' %}Cộng đồng{% else %}Community{% endif %}</p>
         <a class="{% if request.resolver_match.url_name == 'eco_feed' %}active{% endif %}" href="{% url 'eco_feed' %}">
             <span>💬</span> {{ t.eco_feed }}
         </a>
@@ -38,7 +38,7 @@
             <span>🏆</span> {{ t.leaderboard }}
         </a>
 
-        <p class="sidebar-section-title">Challenges</p>
+        <p class="sidebar-section-title">{% if current_lang == 'vi' %}Thử thách{% else %}Challenges{% endif %}</p>
         <a class="{% if request.resolver_match.url_name == 'missions' %}active{% endif %}" href="{% url 'missions' %}">
             <span>🎯</span> {{ t.missions }}
         </a>
@@ -59,7 +59,7 @@
 
     <div class="sidebar-bottom">
         {% if user.is_authenticated %}
-            <p>Logged in as</p>
+            <p>{% if current_lang == 'vi' %}Đăng nhập với tư cách{% else %}Logged in as{% endif %}</p>
             <h3>{{ user.username }}</h3>
 
             <form method="post" action="{% url 'logout' %}">

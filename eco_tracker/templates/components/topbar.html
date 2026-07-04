@@ -8,13 +8,39 @@
             </svg>
         </button>
         <div>
-            <h1 style="margin: 0; line-height: 1.2;">{{ page_title|default:"Dashboard" }}</h1>
-            <p style="margin: 0; margin-top: 2px;">{{ page_subtitle|default:"Track your environmental actions and progress" }}</p>
+            <h1 style="margin: 0; line-height: 1.2;">
+                {% if page_title == 'Dashboard' %}{{ t.dashboard }}
+                {% elif page_title == 'Eco Quests & Missions' or page_title == 'Missions' %}{{ t.missions_title }}
+                {% elif page_title == 'Upload Action' %}{{ t.upload_action_title }}
+                {% elif page_title == 'Edit Eco Action' %}{{ t.edit_action_title }}
+                {% elif page_title == 'Delete Eco Action' %}{% if current_lang == 'vi' %}Xóa hành động Eco{% else %}Delete Eco Action{% endif %}
+                {% elif page_title == 'My Progress' %}{{ t.my_progress_title }}
+                {% elif page_title == 'Friends' %}{{ t.friends_title }}
+                {% elif page_title == 'Groups' %}{{ t.groups_title }}
+                {% elif page_title == 'Leaderboard' %}{{ t.leaderboard_title }}
+                {% elif page_title == 'Profile' %}{{ t.profile }}
+                {% elif page_title == 'Eco Feed' %}{{ t.eco_feed_title }}
+                {% elif page_title == 'Avatar Frame Shop' %}{{ t.frame_shop_title }}
+                {% else %}{{ page_title|default:t.dashboard }}{% endif %}
+            </h1>
+            <p style="margin: 0; margin-top: 2px;">
+                {% if page_subtitle == 'Track your environmental actions and progress' or not page_subtitle %}
+                    {% if current_lang == 'vi' %}Theo dõi các hoạt động bảo vệ môi trường và tiến trình của bạn{% else %}Track your environmental actions and progress{% endif %}
+                {% elif page_subtitle == 'Upload your eco-friendly action and earn points' %}
+                    {% if current_lang == 'vi' %}Tải lên hoạt động thân thiện với môi trường của bạn và nhận điểm thưởng{% else %}Upload your eco-friendly action and earn points{% endif %}
+                {% elif page_subtitle == 'Edit your shared activity details' %}
+                    {% if current_lang == 'vi' %}Chỉnh sửa thông tin hoạt động sống xanh đã chia sẻ của bạn{% else %}Edit your shared activity details{% endif %}
+                {% elif page_subtitle == 'Are you sure you want to delete this action?' %}
+                    {% if current_lang == 'vi' %}Bạn có chắc chắn muốn xóa hành động này?{% else %}Are you sure you want to delete this action?{% endif %}
+                {% else %}
+                    {{ page_subtitle }}
+                {% endif %}
+            </p>
         </div>
     </div>
 
     <div class="topbar-actions">
-        <input type="text" placeholder="Search action...">
+        <input type="text" placeholder="{% if current_lang == 'vi' %}Tìm kiếm hoạt động...{% else %}Search action...{% endif %}">
         <button id="themeToggleBtn"
             style="padding: 0; width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center; font-size: 18px; border: 1.5px solid var(--border); background: var(--panel); cursor: pointer; color: var(--accent); transition: var(--transition);">
             🌙
