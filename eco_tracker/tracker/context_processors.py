@@ -327,7 +327,9 @@ TRANSLATIONS = {
 
 
 def language_translations(request):
-    lang = request.session.get("language", "en")
+    lang = request.session.get("language") or request.COOKIES.get("language") or "en"
+    if "language" not in request.session or request.session["language"] != lang:
+        request.session["language"] = lang
     translation_dict = TRANSLATIONS.get(lang, TRANSLATIONS["en"])
     return {
         "t": translation_dict,

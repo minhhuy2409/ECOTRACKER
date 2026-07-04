@@ -5,9 +5,9 @@
 <section class="dashboard-grid clean-dashboard-grid">
     {% include "components/progress_card.html" %}
 
-    {% include "components/stat_card.html" with label="Total Eco Points" value=total_points subtitle="earned so far" %}
+    {% include "components/stat_card.html" with label=t.total_eco_score value=total_points subtitle=t.pts %}
 
-    {% include "components/stat_card.html" with label="Actions Uploaded" value=action_count subtitle="eco actions completed" %}
+    {% include "components/stat_card.html" with label=t.actions_completed value=action_count subtitle=t.actions %}
 </section>
 
     <div class="dashboard-main-content" style="display: flex; flex-direction: column; gap: 24px;">
@@ -100,6 +100,7 @@
 
         <script>
         const triviaAnswers = {};
+        const activeLang = "{{ current_lang }}";
 
         function selectOption(btn, questionId, option) {
             if (document.getElementById("triviaQuizForm").dataset.submitted === "true") return;
@@ -137,7 +138,7 @@
         function submitTriviaAnswers() {
             const submitBtn = document.getElementById("submitTriviaBtn");
             submitBtn.disabled = true;
-            submitBtn.textContent = "Verifying...";
+            submitBtn.textContent = activeLang === "vi" ? "Đang xác minh..." : "Verifying...";
 
             fetch("{% url 'submit_trivia' %}", {
                 method: "POST",
@@ -192,7 +193,7 @@
                     });
 
                     setTimeout(() => {
-                        document.getElementById("triviaBadge").textContent = `+${data.points_earned} pts earned`;
+                        document.getElementById("triviaBadge").textContent = `+${data.points_earned} ` + (activeLang === "vi" ? "điểm đã nhận" : "pts earned");
                         document.getElementById("successCorrectCount").textContent = data.correct_count;
                         document.getElementById("successPoints").textContent = data.points_earned;
                         
@@ -203,21 +204,21 @@
                         if (scoreDisplay) {
                             const current = parseInt(scoreDisplay.textContent);
                             if (!isNaN(current)) {
-                                scoreDisplay.textContent = `${current + data.points_earned} pts`;
+                                scoreDisplay.textContent = `${current + data.points_earned} ` + (activeLang === "vi" ? "điểm" : "pts");
                             }
                         }
                     }, 4000);
                 } else {
-                    alert(data.error || "An error occurred.");
+                    alert(data.error || (activeLang === "vi" ? "Có lỗi xảy ra." : "An error occurred."));
                     submitBtn.disabled = false;
-                    submitBtn.textContent = "Submit Answers";
+                    submitBtn.textContent = activeLang === "vi" ? "Nộp câu trả lời" : "Submit Answers";
                 }
             })
             .catch(err => {
                 console.error(err);
-                alert("Connection error. Please try again.");
+                alert(activeLang === "vi" ? "Lỗi kết nối. Vui lòng thử lại." : "Connection error. Please try again.");
                 submitBtn.disabled = false;
-                submitBtn.textContent = "Submit Answers";
+                submitBtn.textContent = activeLang === "vi" ? "Nộp câu trả lời" : "Submit Answers";
             });
         }
         </script>
@@ -239,8 +240,8 @@
         <div class="celebration-crown">🏆</div>
         <div class="celebration-icon">{{ level_info.icon }}</div>
         
-        <h1 class="celebration-title">LEVEL UP!</h1>
-        <p class="celebration-subtitle">You transitioned from</p>
+        <h1 class="celebration-title">{% if current_lang == 'vi' %}THĂNG CẤP!{% else %}LEVEL UP!{% endif %}</h1>
+        <p class="celebration-subtitle">{% if current_lang == 'vi' %}Bạn đã tiến cấp từ{% else %}You transitioned from{% endif %}</p>
         
         <div class="celebration-ranks">
             <span class="old-rank">{{ old_level }}</span>
@@ -250,7 +251,7 @@
         
         <p class="celebration-desc">"{{ level_info.description }}"</p>
         
-        <button id="closeCelebrationBtn" class="celebration-btn">Keep Going! 🌱</button>
+        <button id="closeCelebrationBtn" class="celebration-btn">{% if current_lang == 'vi' %}Tiếp tục! 🌱{% else %}Keep Going! 🌱{% endif %}</button>
     </div>
 </div>
 

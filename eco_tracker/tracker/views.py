@@ -1471,7 +1471,6 @@ def frame_shop(request):
     return render(request, "pages/frame_shop.html", context)
 
 
-@login_required
 def set_language(request):
     if request.method == "POST" or request.method == "GET":
         lang = request.POST.get("language") or request.GET.get("language") or "en"
@@ -1481,4 +1480,7 @@ def set_language(request):
                 request,
                 "Language changed successfully!" if lang == "en" else "Thay đổi ngôn ngữ thành công!"
             )
+            response = redirect(request.META.get("HTTP_REFERER", "dashboard"))
+            response.set_cookie("language", lang, max_age=365*24*60*60)  # Keep for 1 year
+            return response
     return redirect(request.META.get("HTTP_REFERER", "dashboard"))
