@@ -235,7 +235,6 @@ def dashboard(request):
         ).aggregate(total=Sum("earned_points"))["total"] or 0
         
         # 4. Points earned on this day from daily trivia
-        from .models import UserTriviaSubmission
         day_trivia_points = UserTriviaSubmission.objects.filter(
             user=request.user,
             date=day
