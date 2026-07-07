@@ -54,5 +54,4 @@ urlpatterns = [
         ),
         name="password_change_done"
     ),
-    path("set-language/", views.set_language, name="set_language"),
 ]

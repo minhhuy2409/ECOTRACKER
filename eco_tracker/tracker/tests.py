@@ -351,23 +351,5 @@ class EcoTrackerPremiumFeaturesTests(TestCase):
         login_success = self.client.login(username="user1", password="newpassword456")
         self.assertTrue(login_success)
 
-    def test_set_language(self):
-        self.client.login(username="user1", password="password123")
-        
-        # 1. Access profile page and check initial language is default (en)
-        response = self.client.get("/profile/")
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(self.client.session.get("language", "en"), "en")
-        
-        # 2. Change language to Vietnamese (vi)
-        response = self.client.post("/set-language/", {"language": "vi"})
-        self.assertEqual(response.status_code, 302) # Redirects back
-        self.assertEqual(self.client.session.get("language"), "vi")
-        
-        # 3. Check profile page is rendered in Vietnamese context
-        response = self.client.get("/profile/")
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.context["current_lang"], "vi")
-        self.assertEqual(response.context["t"]["dashboard"], "Bảng điều khiển")
 
 
