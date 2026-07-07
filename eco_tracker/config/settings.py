@@ -77,28 +77,35 @@ TEMPLATES = [
 WSGI_APPLICATION = 'config.wsgi.application'
 
 
-# Database
-# https://docs.djangoproject.com/en/6.0/ref/settings/#databases
+try:
+    import MySQLdb
+    HAS_MYSQL = True
+except ImportError:
+    try:
+        import pymysql
+        pymysql.install_as_MySQLdb()
+        HAS_MYSQL = True
+    except ImportError:
+        HAS_MYSQL = False
 
-""" use the following for sqlite3 database at local development
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+if HAS_MYSQL:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.mysql",
+            "NAME": "ecotracker",
+            "USER": "admin",
+            "PASSWORD": "isb-mysql-db-password",
+            "HOST": "isb-mysql-db.cfmqo2ccy3py.ap-southeast-1.rds.amazonaws.com",
+            "PORT": "3306",
+        }
     }
-}
-"""
-
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.mysql",
-        "NAME": "ecotracker",
-        "USER": "admin",
-        "PASSWORD": "isb-mysql-db-password",
-        "HOST": "isb-mysql-db.cfmqo2ccy3py.ap-southeast-1.rds.amazonaws.com",
-        "PORT": "3306",
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
     }
-}
 
 # Password validation
 # https://docs.djangoproject.com/en/6.0/ref/settings/#auth-password-validators
