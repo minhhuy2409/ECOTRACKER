@@ -53,8 +53,6 @@
                             <span class="gallery-points-tag" style="top: 16px; right: 16px; background: var(--primary-glow); color: var(--primary); font-weight: 800;">⏱️ {% if current_lang == 'vi' %}Đang phân tích...{% else %}AI analyzing...{% endif %}</span>
                         {% elif action.ai_status == 'rejected' %}
                             <span class="gallery-points-tag" style="top: 16px; right: 16px; background: rgba(220,53,69,0.15); color: #dc3545; font-weight: 800;">❌ {% if current_lang == 'vi' %}Bị từ chối{% else %}Rejected{% endif %}</span>
-                        {% else %}
-                            <span class="gallery-points-tag" style="top: 16px; right: 16px;">+{{ action.points }} {% if current_lang == 'vi' %}điểm{% else %}pts{% endif %}</span>
                         {% endif %}
                     </div>
                 {% endif %}

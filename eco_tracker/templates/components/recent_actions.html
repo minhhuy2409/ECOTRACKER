@@ -25,8 +25,6 @@
                 <p>{{ action.caption }}</p>
                 <small>{{ action.created_at|date:"d M Y, H:i" }}</small>
             </div>
-
-            <strong>+{{ action.points }} {% if current_lang == 'vi' %}điểm{% else %}pts{% endif %}</strong>
         </div>
         {% empty %}
         {% include "components/empty_state.html" with icon="📸" title=t.no_recent_actions|default:"No recent actions" message=t.no_recent_actions_message|default:"Upload your first eco action to start earning points." button_url="/upload/" button_text=t.share_action|default:"Upload Action" %}
