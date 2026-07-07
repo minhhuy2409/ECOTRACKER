@@ -234,7 +234,14 @@ def dashboard(request):
             completed_at__date=day
         ).aggregate(total=Sum("earned_points"))["total"] or 0
         
-        day_points = day_action_points + day_daily_points + day_weekly_points
+        # 4. Points earned on this day from daily trivia
+        from .models import UserTriviaSubmission
+        day_trivia_points = UserTriviaSubmission.objects.filter(
+            user=request.user,
+            date=day
+        ).aggregate(total=Sum("earned_points"))["total"] or 0
+        
+        day_points = day_action_points + day_daily_points + day_weekly_points + day_trivia_points
 
         weekly_chart.append({
             "label": day.strftime("%a"),
