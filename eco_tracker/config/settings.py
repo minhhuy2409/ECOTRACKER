@@ -26,7 +26,11 @@ SECRET_KEY = 'django-insecure-r#%+=t9)+jv^z2v24kp&#p*w&bj5njj9qq9os-tfd%3l+=pqmc
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    "13.212.126.45",
+    "localhost",
+    "127.0.0.1"
+]
 
 
 # Application definition
@@ -76,13 +80,25 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
+""" use the following for sqlite3 database at local development
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+"""
 
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.mysql",
+        "NAME": "ecotracker",
+        "USER": "admin",
+        "PASSWORD": "isb-mysql-db-password",
+        "HOST": "isb-mysql-db.cfmqo2ccy3py.ap-southeast-1.rds.amazonaws.com",
+        "PORT": "3306",
+    }
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/6.0/ref/settings/#auth-password-validators
