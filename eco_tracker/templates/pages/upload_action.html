@@ -79,11 +79,6 @@
                 {% endif %}
             </div>
 
-            <!-- Point Estimate Card -->
-            <div class="points-preview" style="background: linear-gradient(135deg, var(--primary-light), var(--accent-light)); border: 1.5px solid var(--border); border-radius: var(--radius-md); padding: 16px; margin-top: 12px; display: flex; justify-content: space-between; align-items: center;">
-                <p style="font-size: 14px; font-weight: 700; color: var(--text-muted); margin: 0;">{% if current_lang == 'vi' %}AI Phân Loại{% else %}AI Classification{% endif %}</p>
-                <h2 style="font-size: 18px; font-weight: 800; color: var(--accent); margin: 0; font-family: 'Outfit', sans-serif;">{% if current_lang == 'vi' %}Nhận tới +50 điểm{% else %}Earn up to +50 pts{% endif %}</h2>
-            </div>
 
             <button type="submit" class="upload-btn" id="submitBtn" style="width: 100%; justify-content: center; margin-top: 16px; padding: 14px; font-size: 15px;">
                 {{ t.submit_for_ai }}
