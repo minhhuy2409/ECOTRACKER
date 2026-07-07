@@ -446,7 +446,7 @@ def get_user_streak_multiplier(user):
 
 def get_points_earned_today(user):
     """
-    Calculates total points earned today from daily and weekly missions.
+    Calculates total points earned today from daily missions, weekly missions, and daily trivia.
     """
     today = timezone.localdate()
     daily_points = UserDailyMission.objects.filter(
@@ -461,7 +461,14 @@ def get_points_earned_today(user):
         completed_at__date=today
     ).aggregate(total=Sum("earned_points"))["total"] or 0
 
-    return daily_points + weekly_points
+    from .models import UserTriviaSubmission
+    trivia_points = UserTriviaSubmission.objects.filter(
+        user=user,
+        date=today
+    ).aggregate(total=Sum("earned_points"))["total"] or 0
+
+    return daily_points + weekly_points + trivia_points
+
 
 
 def award_points_for_completed_mission(user, user_mission, base_points):
