@@ -171,10 +171,25 @@ if USE_S3:
     AWS_QUERYSTRING_AUTH = False
 
     # Use S3 for media files (avatars, eco action images)
-    DEFAULT_FILE_STORAGE = "tracker.storage_backends.MediaStorage"
+    STORAGES = {
+        "default": {
+            "BACKEND": "tracker.storage_backends.MediaStorage",
+        },
+        "staticfiles": {
+            "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
+        },
+    }
     MEDIA_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/media/"
 else:
     # Local development: use local filesystem
+    STORAGES = {
+        "default": {
+            "BACKEND": "django.core.files.storage.FileSystemStorage",
+        },
+        "staticfiles": {
+            "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
+        },
+    }
     MEDIA_URL = "/media/"
     MEDIA_ROOT = BASE_DIR / "media"
 
